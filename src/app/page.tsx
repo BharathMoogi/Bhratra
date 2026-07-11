@@ -149,29 +149,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stitch MCP Configuration Section */}
-      <section className="py-16 bg-secondary/15 border-t border-border text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-          <h3 className="text-lg font-bold text-foreground">Stitch MCP Server Configuration</h3>
-          <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            Use the following Model Context Protocol (MCP) configuration to connect Bhratra travel listings with external Stitch agent nodes:
-          </p>
-          <div className="text-left bg-[#030712] p-5 rounded-2xl border border-border overflow-x-auto max-w-lg mx-auto shadow-inner">
-            <pre className="text-xs text-emerald-400 font-mono leading-relaxed whitespace-pre-wrap break-all">
-{`{
-  "mcpServers": {
-    "stitch": {
-      "serverUrl": "https://stitch.googleapis.com/mcp",
-      "headers": {
-        "X-Goog-Api-Key": "${"AQ.Ab8RN6Ku" + "fN8Aa6IqLrjisu5kFQ4yCJbv6YT-ejqNkVAaV00lPA"}"
-      }
-    }
-  }
-}`}
-            </pre>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Footer Banner */}
       <section id="community" className="py-20 bg-background text-center">
