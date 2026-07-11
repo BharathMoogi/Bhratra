@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Shield, Compass, Calendar, Users, MapPin, ArrowRight, CheckSquare, MessageSquare, ShieldCheck, Lock, Sparkles, Star } from 'lucide-react';
-import Header from '@/components/shared/Header';
+import { Shield, Compass, Calendar, Users, MapPin, ShieldCheck } from 'lucide-react';
+import Navbar from '@/components/shared/Navbar';
+import Hero from '@/components/features/Hero';
 import Footer from '@/components/shared/Footer';
 
 export default function Home() {
@@ -63,150 +64,17 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      {/* Sticky transparent header navbar */}
+      <Navbar />
       
-      {/* 1. Cinematic Storytelling Hero Section */}
-      <section className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-b from-background to-secondary/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left Column: Storytelling Narrative */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05]">
-                Never Travel<br />
-                <span className="bg-gradient-to-r from-primary to-sky-500 bg-clip-text text-transparent">
-                  Alone Again.
-                </span>
-              </h1>
-
-              {/* Arjun quotes testimonial */}
-              <div className="border-l-4 border-primary pl-4 py-1 italic text-md text-primary bg-primary/5 rounded-r-xl max-w-lg">
-                "I was just another dev in Bengaluru until I found my tribe."
-              </div>
-
-              {/* Story introduction */}
-              <p className="text-base text-muted-foreground leading-relaxed max-w-xl">
-                Arjun, a software engineer, dreamed of the Himalayas but had no one to ride with. Through Bhratra, he connected with 7 other verified enthusiasts. Together, they conquered the Khardung La pass, turning strangers into a lifelong brotherhood.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                <Link
-                  href="/auth/signup"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3.5 rounded-full text-sm font-bold shadow-md transition-colors"
-                >
-                  Start Your Journey
-                  <ArrowRight className="h-4.5 w-4.5" />
-                </Link>
-                <Link
-                  href="/trips"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-background border border-border hover:bg-secondary text-foreground px-8 py-3.5 rounded-full text-sm font-bold transition-colors"
-                >
-                  Explore Trips
-                </Link>
-              </div>
-              
-              {/* Quick stats grid */}
-              <div className="pt-8 border-t border-border grid grid-cols-4 gap-4 max-w-lg">
-                <div>
-                  <div className="text-xl sm:text-2xl font-extrabold text-foreground">25K+</div>
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Travelers</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-extrabold text-foreground flex items-center gap-0.5">
-                    4.9
-                  </div>
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Rating</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-extrabold text-foreground">5K+</div>
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Trips</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-extrabold text-foreground">100+</div>
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Countries</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Pixar Illustration Card & Value Grid */}
-            <div className="lg:col-span-5 space-y-6">
-              
-              {/* Pixar mountain illustration card */}
-              <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl aspect-video w-full group">
-                <img
-                  src="/himalaya_expedition_hero.png"
-                  alt="Himalayan motorcycle expedition illustration"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 flex flex-col justify-end">
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Featured Expedition</span>
-                  <h4 className="text-white font-bold text-lg mt-1">Leh-Manali Adventure Ride</h4>
-                  <p className="text-white/70 text-xs mt-0.5 flex items-center gap-1">
-                    <MapPin className="h-3 w-3 text-emerald-400" /> Bengaluru to Leh Rider Tribe
-                  </p>
-                </div>
-              </div>
-
-              {/* 2x2 Feature badges grid */}
-              <div className="grid grid-cols-2 gap-4 bg-card border border-border p-5 rounded-3xl shadow-lg">
-                
-                {/* 1. Verified Travelers */}
-                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
-                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
-                    <ShieldCheck className="h-4.5 w-4.5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-foreground">Verified Travelers</h4>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Government ID safety checks.</p>
-                  </div>
-                </div>
-
-                {/* 2. Safe Community */}
-                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
-                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
-                    <Lock className="h-4.5 w-4.5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-foreground">Safe Community</h4>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Gender-specific filters.</p>
-                  </div>
-                </div>
-
-                {/* 3. Smart Matching */}
-                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
-                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
-                    <Sparkles className="h-4.5 w-4.5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-foreground">Smart Matching</h4>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Preferences & behavior filters.</p>
-                  </div>
-                </div>
-
-                {/* 4. Secure Chat */}
-                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
-                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
-                    <MessageSquare className="h-4.5 w-4.5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-foreground">Secure Chat</h4>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">Realtime companion planning.</p>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Animated landing Hero section */}
+      <Hero />
 
       {/* Categories Grid */}
-      <section className="py-20 bg-background">
+      <section id="how-it-works" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto space-y-4">
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
               Explore Trips by Travel Style
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -223,7 +91,7 @@ export default function Home() {
                 <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${cat.color} text-white shadow-sm`}>
                   <cat.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-bold mt-4 group-hover:text-primary transition-colors">
+                <h3 className="text-lg font-bold mt-4 group-hover:text-primary transition-colors text-foreground">
                   {cat.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-2">
@@ -236,11 +104,11 @@ export default function Home() {
       </section>
 
       {/* Safety & Trust Banner */}
-      <section className="py-20 bg-secondary/40 border-y border-border">
+      <section id="safety" className="py-20 bg-secondary/40 border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
                 Travel Safety is Our #1 Priority
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -265,7 +133,7 @@ export default function Home() {
             <div className="bg-gradient-to-br from-primary/10 to-sky-500/10 border border-primary/20 p-8 rounded-3xl space-y-6 text-center">
               <Shield className="h-16 w-16 text-primary mx-auto stroke-[1.5]" />
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold">Get Verified in 3 Steps</h3>
+                <h3 className="text-2xl font-bold text-foreground">Get Verified in 3 Steps</h3>
                 <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                   Verify your email, submit an official ID securely, and receive the trust badge on your traveler profile.
                 </p>
@@ -306,9 +174,9 @@ export default function Home() {
       </section>
 
       {/* CTA Footer Banner */}
-      <section className="py-20 bg-background text-center">
+      <section id="community" className="py-20 bg-background text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             Ready to Find Your Next Adventure Buddy?
           </h2>
           <p className="text-lg text-muted-foreground">
