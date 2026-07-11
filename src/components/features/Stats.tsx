@@ -23,7 +23,7 @@ function CountUpNumber({ value, suffix = '', light = false }: { value: number; s
   }, [rounded, suffix]);
 
   return (
-    <span ref={ref} className={`font-extrabold text-xl ${light ? 'text-white' : 'text-gray-900'}`}>
+    <span ref={ref} className="font-extrabold text-xl" style={{ color: light ? '#ffffff' : '#0F172A' }}>
       0
     </span>
   );
@@ -64,8 +64,8 @@ export default function Stats({ light = false }: StatsProps) {
       {/* 4.9 Rating with Sunset Orange star */}
       <motion.div variants={itemVariants} className="space-y-0.5">
         <div className="flex items-center gap-0.5">
-          <span className={`font-extrabold text-xl ${light ? 'text-white' : 'text-gray-900'}`}>4.9</span>
-          <Star className="h-3.5 w-3.5 text-sunset-orange fill-sunset-orange mb-0.5" />
+          <span className="font-extrabold text-xl" style={{ color: light ? '#ffffff' : '#0F172A' }}>4.9</span>
+          <Star className="h-3.5 w-3.5 mb-0.5" style={{ color: '#F97316', fill: '#F97316' }} />
         </div>
         <p className={`text-[9px] font-bold uppercase tracking-widest ${light ? 'text-blue-100' : 'text-gray-400'}`}>
           Rating

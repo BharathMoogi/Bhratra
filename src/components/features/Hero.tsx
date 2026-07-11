@@ -85,12 +85,14 @@ export default function Hero() {
         };
 
   return (
-    <section className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
-      {/* ─── Hero Gradient Background ─── */}
+    <section 
+      className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden w-full"
+    >
+      {/* ─── Hero Gradient Background (always visible, z-0) ─── */}
       <div
-        className="absolute inset-0 -z-10"
+        className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, #1E40AF 0%, #38BDF8 60%, #F8FAFC 100%)',
+          background: 'linear-gradient(175deg, #1E3A8A 0%, #1E40AF 30%, #38BDF8 70%, #E0F2FE 100%)',
         }}
       />
 
@@ -100,49 +102,52 @@ export default function Hero() {
           <motion.div
             animate={{ x: [-80, 80, -80] }}
             transition={{ duration: 35, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[15%] left-[10%] w-72 h-20 bg-white/10 blur-xl rounded-full -z-10 pointer-events-none"
+            className="absolute top-[15%] left-[10%] w-72 h-20 bg-white/10 blur-xl rounded-full z-0 pointer-events-none"
           />
           <motion.div
             animate={{ x: [60, -60, 60] }}
             transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[35%] right-[15%] w-96 h-28 bg-white/15 blur-2xl rounded-full -z-10 pointer-events-none"
+            className="absolute top-[35%] right-[15%] w-96 h-28 bg-white/15 blur-2xl rounded-full z-0 pointer-events-none"
           />
           <motion.div
             animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
             transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-[20%] left-[45%] w-3 h-3 bg-white/40 rounded-full -z-10 pointer-events-none"
+            className="absolute bottom-[20%] left-[45%] w-3 h-3 bg-white/40 rounded-full z-0 pointer-events-none"
           />
           <motion.div
             animate={{ y: [0, -35, 0], x: [0, -15, 0] }}
             transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute bottom-[30%] left-[52%] w-2 h-2 bg-white/30 rounded-full -z-10 pointer-events-none"
+            className="absolute bottom-[30%] left-[52%] w-2 h-2 bg-white/30 rounded-full z-0 pointer-events-none"
           />
         </>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
           {/* ─── LEFT COLUMN ─── */}
           <div className="flex flex-col items-start space-y-6 z-10">
             <motion.h1
               {...fadeUp(0.05)}
-              className="text-5xl sm:text-6xl font-extrabold leading-[1.08] tracking-tight text-white"
+              className="text-5xl sm:text-6xl font-extrabold leading-[1.08] tracking-tight"
+              style={{ color: '#ffffff' }}
             >
               Never Travel<br />
-              <span className="text-sunset-orange">Alone Again.</span>
+              <span style={{ color: '#F97316' }}>Alone Again.</span>
             </motion.h1>
 
             <motion.p
               {...fadeUp(0.15)}
-              className="italic text-blue-100/80 text-sm max-w-sm"
+              className="italic text-sm max-w-sm"
+              style={{ color: 'rgba(219, 234, 254, 0.9)' }}
             >
               "I was just another dev in Bengaluru until I found my tribe."
             </motion.p>
 
             <motion.p
               {...fadeUp(0.22)}
-              className="text-blue-50/90 text-sm leading-relaxed max-w-sm"
+              className="text-sm leading-relaxed max-w-sm"
+              style={{ color: 'rgba(239, 246, 255, 0.95)' }}
             >
               Arjun, a software engineer, dreamed of the Himalayas but had no one to ride with. Through Bhratra, he connected with 7 other verified enthusiasts. Together, they conquered the Khardung La pass, turning strangers into a lifelong brotherhood.
             </motion.p>
@@ -151,7 +156,8 @@ export default function Hero() {
             <motion.button
               {...fadeUp(0.26)}
               onClick={() => { setIsStoryOpen(true); setCurrentSlide(0); setProgress(0); }}
-              className="inline-flex items-center gap-3 text-white hover:text-sunset-orange font-bold text-xs tracking-wider uppercase transition-colors group focus:outline-none"
+              className="inline-flex items-center gap-3 font-bold text-xs tracking-wider uppercase transition-colors group focus:outline-none"
+              style={{ color: '#ffffff' }}
             >
               <span className="relative flex h-9 w-9">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/30 opacity-20"></span>
