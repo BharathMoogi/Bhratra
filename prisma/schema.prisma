@@ -1,0 +1,268 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. User Model mapping to Supabase auth.users credentials
+model User {
+  id                    String         @id // Maps to Supabase auth.users.id
+  email                 String         @unique
+  role                  String         @default("USER") // USER, ADMIN, MODERATOR
+  status                String         @default("ACTIVE") // ACTIVE, SUSPENDED, DELETED
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  deletedAt             DateTime?      // Soft delete timestamp
+
+  // Relationships
+  profile               Profile?
+  ownedTrips            Trip[]         @relation("TripOwner")
+  memberships           TripMember[]
+  requests              TripRequest[]
+  messages              Message[]
+  reviewsWritten        Review[]       @relation("Reviewer")
+  reviewsReceived       Review[]       @relation("Reviewee")
+  notificationsReceived Notification[] @relation("NotificationReceiver")
+  notificationsSent     Notification[] @relation("NotificationActor")
+  reportsFiled          Report[]       @relation("Reporter")
+  reportsReceived       Report[]       @relation("ReportedUser")
+  blocksInitiated       BlockedUser[]  @relation("Blocker")
+  blocksReceived        BlockedUser[]  @relation("Blocked")
+  imagesUploaded        TripImage[]
+  chatReadStates        ChatReadState[]
+
+  @@index([role])
+  @@index([status])
+}
+
+// 2. Profile Model holding user-specific detail details
+model Profile {
+  id              String    @id
+  user            User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  fullName        String?
+  avatarUrl       String?
+  bio             String?
+  phoneNumber     String?
+  gender          String?
+  birthDate       DateTime?
+  isVerified      Boolean   @default(false)
+  verificationDoc String?
+  rating          Float     @default(0.0)
+  interests       String[]
+  languages       String[]
+  dietary         String    @default("NO_PREFERENCE")
+  smoking         Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  @@index([isVerified])
+}
+
+// 3. Trip Model defining a posted journey
+model Trip {
+  id             String        @id @default(uuid())
+  title          String
+  description    String
+  type           String        // ROAD_TRIP, BIKE_RIDE, TREKKING, BACKPACKING, WEEKEND, INTERNATIONAL
+  startLocation  String
+  endLocation    String
+  startDate      DateTime
+  endDate        DateTime
+  budgetRange    String        // BUDGET, MODERATE, LUXURY
+  maxCapacity    Int           @default(4)
+  isVerifiedOnly Boolean       @default(true)
+  genderPref     String        @default("ANY") // ANY, MALE_ONLY, FEMALE_ONLY
+  vehicle        String?
+  difficulty     String?
+  languages      String[]
+  status         String        @default("PLANNING") // PLANNING, CONFIRMED, ONGOING, COMPLETED, CANCELLED
+  ownerId        String
+  owner          User          @relation("TripOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  // Relationships
+  members        TripMember[]
+  requests       TripRequest[]
+  messages       Message[]
+  reports        Report[]
+  images         TripImage[]
+  chatReadStates ChatReadState[]
+
+  @@index([ownerId])
+  @@index([type])
+  @@index([status])
+  @@index([startDate])
+}
+
+// 4. TripMember Model linking accepted group participants
+model TripMember {
+  id        String    @id @default(uuid())
+  tripId    String
+  trip      Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String    @default("MEMBER") // ORGANIZER, MEMBER
+  joinedAt  DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@unique([tripId, userId])
+  @@index([tripId])
+  @@index([userId])
+}
+
+// 5. TripRequest Model mapping applicant requests
+model TripRequest {
+  id        String   @id @default(uuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  message   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tripId, userId])
+  @@index([tripId])
+  @@index([userId])
+  @@index([status])
+}
+
+// 6. Message Model for coordination chat
+model Message {
+  id        String    @id @default(uuid())
+  tripId    String
+  trip      Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content   String
+  fileUrl   String?
+  fileType  String? // IMAGE, DOCUMENT
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@index([tripId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+// 7. Review Model mapping feedback between companions
+model Review {
+  id          String   @id @default(uuid())
+  tripId      String?
+  reviewerId  String
+  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
+  revieweeId  String
+  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade)
+  ratingValue Int      // Overall average (1-5)
+  comment     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  ratings     Rating[]
+
+  @@unique([reviewerId, revieweeId, tripId])
+  @@index([revieweeId])
+  @@index([reviewerId])
+}
+
+// 8. Rating Model detailing specific criteria scores
+model Rating {
+  id        String   @id @default(uuid())
+  reviewId  String
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  category  String   // SAFETY, PUNCTUALITY, COOPERATIVENESS, COMMUNICATION
+  score     Int      // 1 to 5
+  createdAt DateTime @default(now())
+
+  @@unique([reviewId, category])
+  @@index([reviewId])
+}
+
+// 9. Notification Model representing transactional in-app alerts
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation("NotificationReceiver", fields: [userId], references: [id], onDelete: Cascade)
+  senderId  String?
+  sender    User?    @relation("NotificationActor", fields: [senderId], references: [id], onDelete: SetNull)
+  type      String   // TRIP_REQUEST, TRIP_ACCEPT, CHAT_MESSAGE, REVIEW_RECEIVED
+  title     String
+  content   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// 10. Report Model mapping safety and content moderation
+model Report {
+  id             String    @id @default(uuid())
+  reporterId     String
+  reporter       User      @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUserId String?
+  reportedUser   User?     @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: SetNull)
+  reportedTripId String?
+  reportedTrip   Trip?     @relation(fields: [reportedTripId], references: [id], onDelete: SetNull)
+  category       String    // SPAM, SAFETY, HARASSMENT, SCAM, INAPPROPRIATE
+  reason         String
+  status         String    @default("PENDING") // PENDING, RESOLVED, DISMISSED
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([status])
+  @@index([reportedUserId])
+  @@index([reportedTripId])
+}
+
+// 11. BlockedUser Model representing direct user matches blocking
+model BlockedUser {
+  id        String   @id @default(uuid())
+  blockerId String
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockedId String
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+}
+
+// 12. TripImage Model managing journey galleries
+model TripImage {
+  id           String   @id @default(uuid())
+  tripId       String
+  trip         Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  imageUrl     String
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+
+  @@index([tripId])
+}
+
+// 13. ChatReadState Model managing traveler unread counters
+model ChatReadState {
+  id         String   @id @default(uuid())
+  tripId     String
+  trip       Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadAt DateTime @default(now())
+
+  @@unique([tripId, userId])
+  @@index([tripId])
+  @@index([userId])
+}
