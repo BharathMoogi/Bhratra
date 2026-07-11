@@ -72,11 +72,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/trips', request.url));
   }
 
-  // If authenticated user visits the public landing page (/), redirect them directly to the dashboard (/trips)
-  if (path === '/' && user) {
-    return NextResponse.redirect(new URL('/trips', request.url));
-  }
-
   return response;
 }
 
