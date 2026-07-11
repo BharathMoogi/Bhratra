@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, MessageSquare, Check, Sparkles, Play, X, ChevronRight, ChevronLeft, Laptop, ShieldAlert, Navigation } from 'lucide-react';
+import { ArrowRight, MessageSquare, Check, Sparkles, Play, X, ChevronRight, ChevronLeft, Laptop, Navigation } from 'lucide-react';
 import Stats from './Stats';
 
 // Story slides data for the interactive storyteller
@@ -85,7 +85,41 @@ export default function Hero() {
         };
 
   return (
-    <section className="bg-white min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+    <section className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+      {/* ─── Hero Gradient Background ─── */}
+      <div
+        className="absolute inset-0 -z-10"
+        style={{
+          background: 'linear-gradient(180deg, #1E40AF 0%, #38BDF8 60%, #F8FAFC 100%)',
+        }}
+      />
+
+      {/* ─── Natural Drifting Clouds (Visual Storytelling Effect) ─── */}
+      {!shouldReduceMotion && (
+        <>
+          <motion.div
+            animate={{ x: [-80, 80, -80] }}
+            transition={{ duration: 35, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[15%] left-[10%] w-72 h-20 bg-white/10 blur-xl rounded-full -z-10 pointer-events-none"
+          />
+          <motion.div
+            animate={{ x: [60, -60, 60] }}
+            transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[35%] right-[15%] w-96 h-28 bg-white/15 blur-2xl rounded-full -z-10 pointer-events-none"
+          />
+          <motion.div
+            animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-[20%] left-[45%] w-3 h-3 bg-white/40 rounded-full -z-10 pointer-events-none"
+          />
+          <motion.div
+            animate={{ y: [0, -35, 0], x: [0, -15, 0] }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute bottom-[30%] left-[52%] w-2 h-2 bg-white/30 rounded-full -z-10 pointer-events-none"
+          />
+        </>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
@@ -93,22 +127,22 @@ export default function Hero() {
           <div className="flex flex-col items-start space-y-6 z-10">
             <motion.h1
               {...fadeUp(0.05)}
-              className="text-5xl sm:text-6xl font-extrabold leading-[1.08] tracking-tight text-gray-900"
+              className="text-5xl sm:text-6xl font-extrabold leading-[1.08] tracking-tight text-white"
             >
               Never Travel<br />
-              <span className="text-blue-600">Alone Again.</span>
+              <span className="text-sunset-orange">Alone Again.</span>
             </motion.h1>
 
             <motion.p
               {...fadeUp(0.15)}
-              className="italic text-gray-500 text-sm max-w-sm"
+              className="italic text-blue-100/80 text-sm max-w-sm"
             >
               "I was just another dev in Bengaluru until I found my tribe."
             </motion.p>
 
             <motion.p
               {...fadeUp(0.22)}
-              className="text-gray-500 text-sm leading-relaxed max-w-sm"
+              className="text-blue-50/90 text-sm leading-relaxed max-w-sm"
             >
               Arjun, a software engineer, dreamed of the Himalayas but had no one to ride with. Through Bhratra, he connected with 7 other verified enthusiasts. Together, they conquered the Khardung La pass, turning strangers into a lifelong brotherhood.
             </motion.p>
@@ -117,12 +151,12 @@ export default function Hero() {
             <motion.button
               {...fadeUp(0.26)}
               onClick={() => { setIsStoryOpen(true); setCurrentSlide(0); setProgress(0); }}
-              className="inline-flex items-center gap-3 text-blue-600 hover:text-blue-700 font-bold text-xs tracking-wider uppercase transition-colors group focus:outline-none"
+              className="inline-flex items-center gap-3 text-white hover:text-sunset-orange font-bold text-xs tracking-wider uppercase transition-colors group focus:outline-none"
             >
               <span className="relative flex h-9 w-9">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-20"></span>
-                <span className="relative rounded-full bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center w-9 h-9 transition-colors border border-blue-100">
-                  <Play className="h-3 w-3 fill-blue-600 stroke-blue-600 ml-0.5" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/30 opacity-20"></span>
+                <span className="relative rounded-full bg-white/10 group-hover:bg-white/20 flex items-center justify-center w-9 h-9 transition-colors border border-white/20">
+                  <Play className="h-3 w-3 fill-white stroke-white ml-0.5" />
                 </span>
               </span>
               Watch Arjun's Journey
@@ -133,7 +167,7 @@ export default function Hero() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3.5 rounded-full shadow-md shadow-blue-200 transition-colors text-sm"
+                  className="inline-flex items-center gap-2 bg-mountain-blue hover:bg-blue-700 text-white font-semibold px-6 py-3.5 rounded-[16px] shadow-lg shadow-blue-900/30 transition-colors text-sm"
                 >
                   Start Your Journey
                   <ArrowRight className="h-4 w-4" />
@@ -142,7 +176,7 @@ export default function Hero() {
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/trips"
-                  className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold px-6 py-3.5 rounded-full border border-gray-200 transition-colors text-sm"
+                  className="inline-flex items-center justify-center gap-2 bg-white hover:bg-blue-50/50 text-mountain-blue font-semibold px-6 py-3.5 rounded-[16px] border border-white/60 shadow-sm transition-colors text-sm"
                 >
                   Explore Trips
                 </Link>
@@ -151,7 +185,7 @@ export default function Hero() {
 
             {/* Stats */}
             <motion.div {...fadeUp(0.4)} className="w-full">
-              <Stats />
+              <Stats light />
             </motion.div>
           </div>
 
@@ -161,15 +195,15 @@ export default function Hero() {
             {/* 1. Main large photo card */}
             <motion.div
               {...fadeUp(0.2)}
-              className="relative w-[340px] sm:w-[420px] aspect-[4/3] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-gray-100 z-10"
+              className="relative w-[340px] sm:w-[420px] aspect-[4/3] rounded-[24px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.18)] border border-white/20 z-10"
             >
               <img
                 src="/himalaya_expedition_hero.png"
                 alt="Ladakh Expedition"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover animate-pulse-slow"
               />
               {/* Dark overlay for text contrast */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 
               {/* Internal SVG Route Overlay */}
               {!shouldReduceMotion && (
@@ -181,7 +215,7 @@ export default function Hero() {
                   {/* Winding road path */}
                   <motion.path
                     d="M 120 220 C 180 200, 200 240, 260 190 C 310 150, 280 120, 360 140"
-                    stroke="#10b981"
+                    stroke="#38BDF8" /* Sky Blue glowing animated travel route */
                     strokeWidth="3.5"
                     strokeLinecap="round"
                     strokeDasharray="6,6"
@@ -193,7 +227,7 @@ export default function Hero() {
                   {/* Pulsating location marker dot moving along path */}
                   <motion.circle
                     r="6"
-                    fill="#3b82f6"
+                    fill="#F97316" /* Sunset Orange location pin / progress dot */
                     stroke="white"
                     strokeWidth="2"
                     animate={{
@@ -216,8 +250,8 @@ export default function Hero() {
               </div>
 
               {/* 96% Compatibility internal tag */}
-              <div className="absolute left-[165px] top-[145px] bg-black/45 backdrop-blur-sm px-2.5 py-0.5 rounded-full border border-white/10 text-[9px] font-semibold text-teal-400 flex items-center gap-1 z-20">
-                <Sparkles className="h-2 w-2" />
+              <div className="absolute left-[165px] top-[145px] bg-black/45 backdrop-blur-sm px-2.5 py-0.5 rounded-full border border-white/10 text-[9px] font-semibold text-sky-300 flex items-center gap-1 z-20">
+                <Sparkles className="h-2 w-2 text-sunset-orange" />
                 96% Compatibility
               </div>
 
@@ -226,7 +260,7 @@ export default function Hero() {
                 {...floatAnim(0.8, 5, 4.5)}
                 className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-white flex items-center gap-1.5 z-20"
               >
-                <div className="w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center text-white">
+                <div className="w-4 h-4 bg-forest-green rounded-full flex items-center justify-center text-white">
                   <Check className="h-2.5 w-2.5 stroke-[3]" />
                 </div>
                 <span className="text-[10px] font-bold text-gray-800">8/8 Verified Riders</span>
@@ -237,10 +271,10 @@ export default function Hero() {
             <motion.div
               {...fadeUp(0.3)}
               {...floatAnim(0.2, 7, 3.8)}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="absolute -top-3 left-4 sm:left-12 bg-white rounded-2xl shadow-xl border border-gray-100/80 px-4 py-2.5 flex items-center gap-3 z-30 pointer-events-auto cursor-pointer"
+              whileHover={{ scale: 1.03, y: -5 }}
+              className="absolute -top-3 left-4 sm:left-12 glass-card px-4 py-2.5 flex items-center gap-3 z-30 pointer-events-auto cursor-pointer"
             >
-              <div className="w-8 h-8 bg-orange-100 rounded-xl flex items-center justify-center text-lg">
+              <div className="w-8 h-8 bg-orange-50 rounded-xl flex items-center justify-center text-lg shadow-inner">
                 🚀
               </div>
               <div>
@@ -254,7 +288,7 @@ export default function Hero() {
               {...fadeUp(0.35)}
               {...floatAnim(0.9, 6, 4.2)}
               whileHover={{ scale: 1.05 }}
-              className="absolute top-10 right-4 sm:right-12 bg-white rounded-2xl shadow-lg border border-gray-100/80 px-3.5 py-2 flex items-center gap-2.5 z-30 pointer-events-auto cursor-pointer"
+              className="absolute top-10 right-4 sm:right-12 glass-card px-3.5 py-2 flex items-center gap-2.5 z-30 pointer-events-auto cursor-pointer"
             >
               <div className="text-lg">🌤️</div>
               <div>
@@ -268,23 +302,23 @@ export default function Hero() {
               {...fadeUp(0.4)}
               {...floatAnim(1.4, 8, 4.8)}
               whileHover={{ scale: 1.05 }}
-              className="absolute right-0 sm:right-4 top-[170px] bg-white rounded-2xl shadow-2xl border border-gray-100 px-4 py-3 w-40 z-30 pointer-events-auto cursor-pointer"
+              className="absolute right-0 sm:right-4 top-[170px] glass-card px-4 py-3 w-40 z-30 pointer-events-auto cursor-pointer"
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <span className="text-xs">😊</span>
-                <span className="text-[10px] text-blue-600 font-bold">98% Compatibility</span>
+                <span className="text-[10px] text-mountain-blue font-bold">98% Compatibility</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden my-1.5">
+              <div className="w-full bg-gray-200/50 rounded-full h-1.5 overflow-hidden my-1.5">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: "98%" }}
                   transition={{ duration: 1.2, delay: 0.8 }}
-                  className="bg-blue-600 h-full rounded-full"
+                  className="bg-forest-green h-full rounded-full"
                 />
               </div>
               <div className="flex items-center gap-1.5 mt-2">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="text-[8px] font-bold text-emerald-600 tracking-wider uppercase">Live Progress</span>
+                <span className="w-1.5 h-1.5 bg-forest-green rounded-full animate-pulse" />
+                <span className="text-[8px] font-bold text-forest-green tracking-wider uppercase">Live Progress</span>
               </div>
               <p className="text-[9px] font-bold text-gray-700 mt-0.5">Manali → Leh</p>
             </motion.div>
@@ -294,20 +328,20 @@ export default function Hero() {
               {...fadeUp(0.45)}
               {...floatAnim(2, 6, 4)}
               whileHover={{ scale: 1.03 }}
-              className="absolute -bottom-6 left-4 sm:left-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-100 p-3.5 w-52 z-30 pointer-events-auto cursor-pointer"
+              className="absolute -bottom-6 left-4 sm:left-10 glass-card p-3.5 w-52 z-30 pointer-events-auto cursor-pointer"
             >
               <div className="flex items-center gap-1.5 mb-2.5 pb-1.5 border-b border-gray-100">
                 <div className="w-4 h-4 bg-blue-50 rounded-full flex items-center justify-center">
-                  <MessageSquare className="h-2.5 w-2.5 text-blue-600" />
+                  <MessageSquare className="h-2.5 w-2.5 text-mountain-blue" />
                 </div>
                 <span className="text-[10px] font-extrabold text-gray-800 uppercase tracking-wider">Group Chat</span>
               </div>
               <div className="space-y-2">
-                <div className="bg-gray-50 rounded-xl px-3 py-1.5 border border-gray-100 max-w-[90%]">
+                <div className="bg-gray-100/50 rounded-xl px-3 py-1.5 border border-gray-200/20 max-w-[90%]">
                   <p className="text-[9px] font-medium text-gray-600 leading-tight">"Fuel stop at Manali?"</p>
                 </div>
-                <div className="bg-blue-50 rounded-xl px-3 py-1.5 border border-blue-100/50 ml-auto max-w-[90%]">
-                  <p className="text-[9px] font-semibold text-blue-700 leading-tight">"Let's camp near Pangong."</p>
+                <div className="bg-blue-50 rounded-xl px-3 py-1.5 border border-blue-100/30 ml-auto max-w-[90%]">
+                  <p className="text-[9px] font-semibold text-mountain-blue leading-tight">"Let's camp near Pangong."</p>
                 </div>
               </div>
             </motion.div>
@@ -330,7 +364,7 @@ export default function Hero() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 p-6 sm:p-8"
+              className="relative bg-white rounded-[24px] max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 p-6 sm:p-8"
             >
               {/* Close Button */}
               <button
@@ -345,7 +379,7 @@ export default function Hero() {
                 {STORY_SLIDES.map((_, idx) => (
                   <div key={idx} className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="bg-blue-600 h-full transition-all duration-75"
+                      className="bg-mountain-blue h-full transition-all duration-75"
                       style={{
                         width:
                           idx < currentSlide
@@ -371,7 +405,7 @@ export default function Hero() {
                 >
                   {/* Category Header */}
                   <div>
-                    <span className="text-[10px] font-bold tracking-widest text-blue-500 uppercase">
+                    <span className="text-[10px] font-bold tracking-widest text-mountain-blue uppercase">
                       {STORY_SLIDES[currentSlide].title}
                     </span>
                     <h3 className="text-xl font-extrabold text-gray-900 mt-1">
@@ -380,7 +414,7 @@ export default function Hero() {
                   </div>
 
                   {/* Animated Visual/Illustration Area */}
-                  <div className="w-full h-40 bg-slate-50 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden relative">
+                  <div className="w-full h-40 bg-slate-50 rounded-[24px] border border-gray-100 flex items-center justify-center overflow-hidden relative">
                     
                     {/* Visual 1: Coding */}
                     {STORY_SLIDES[currentSlide].illustration === "coding" && (
@@ -410,9 +444,9 @@ export default function Hero() {
                         <motion.div
                           animate={{ scale: [1, 1.1, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
-                          className="w-14 h-14 rounded-full bg-blue-50 border-2 border-blue-400 flex items-center justify-center text-blue-600 z-10"
+                          className="w-14 h-14 rounded-full bg-blue-50 border-2 border-blue-400 flex items-center justify-center text-mountain-blue z-10"
                         >
-                          <Sparkles className="h-6 w-6" />
+                          <Sparkles className="h-6 w-6 text-sunset-orange" />
                         </motion.div>
 
                         {/* Connected User Node Avatars */}
@@ -444,7 +478,7 @@ export default function Hero() {
                               animate={{ scale: 1, opacity: 1 }}
                               transition={{ type: "spring", delay: 0.3 + i * 0.2 }}
                               style={{ transform: `translate(${node.x}px, ${node.y}px)` }}
-                              className="absolute w-7 h-7 rounded-full bg-white border border-blue-200 shadow-md flex items-center justify-center text-[9px] font-bold text-blue-600"
+                              className="absolute w-7 h-7 rounded-full bg-white border border-blue-200 shadow-md flex items-center justify-center text-[9px] font-bold text-mountain-blue"
                             >
                               {node.init}
                             </motion.div>
@@ -466,7 +500,7 @@ export default function Hero() {
                           />
                           <motion.path
                             d="M 50 120 Q 150 60 250 110 T 350 70"
-                            stroke="#10b981"
+                            stroke="#15803D"
                             strokeWidth="2"
                             fill="none"
                             initial={{ pathLength: 0 }}
@@ -487,7 +521,7 @@ export default function Hero() {
                           }}
                           className="absolute bg-white px-2.5 py-1 rounded-full border border-gray-100 shadow-lg flex items-center gap-1 z-10"
                         >
-                          <Navigation className="h-3 w-3 text-blue-600 rotate-45" />
+                          <Navigation className="h-3 w-3 text-mountain-blue rotate-45" />
                           <span className="text-[9px] font-bold text-gray-800">17,582 ft</span>
                         </motion.div>
                       </div>
@@ -523,7 +557,7 @@ export default function Hero() {
 
                 <button
                   onClick={() => setIsStoryOpen(false)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full text-xs transition-colors focus:outline-none"
+                  className="bg-mountain-blue hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-[16px] text-xs transition-colors focus:outline-none"
                 >
                   Join Like Arjun
                 </button>

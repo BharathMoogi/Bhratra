@@ -57,12 +57,13 @@ export default function NavbarClient() {
       : 'bg-transparent py-5'
     : 'bg-white border-b border-gray-100 py-3 shadow-sm';
 
-  const linkColor = (href: string) =>
-    pathname === href
-      ? 'text-blue-600 font-bold'
-      : isLandingPage && !isScrolled
-        ? 'text-slate-600 hover:text-blue-600 font-semibold'
-        : 'text-slate-500 hover:text-slate-900 font-semibold';
+  const linkColor = (href: string) => {
+    const isActive = pathname === href;
+    if (isLandingPage && !isScrolled) {
+      return isActive ? 'text-white font-extrabold' : 'text-blue-100 hover:text-white font-semibold';
+    }
+    return isActive ? 'text-mountain-blue font-extrabold' : 'text-slate-600 hover:text-mountain-blue font-semibold';
+  };
 
   const isLoggedIn = !!user;
   const userName: string | null = user?.user_metadata?.full_name ?? user?.email?.split('@')[0] ?? null;
@@ -75,9 +76,13 @@ export default function NavbarClient() {
     <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${navBg}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
-        {/* Brand */}
+        {/* Brand Logo */}
         <Link href="/" className="flex items-center">
-          <span className="font-extrabold text-xl tracking-tight text-blue-600">Bhratra</span>
+          <span className={`font-extrabold text-xl tracking-tight transition-colors ${
+            isLandingPage && !isScrolled ? 'text-white' : 'text-mountain-blue'
+          }`}>
+            Bhratra
+          </span>
         </Link>
 
         {/* Desktop Nav Links */}
@@ -89,13 +94,15 @@ export default function NavbarClient() {
           ))}
         </div>
 
-        {/* Desktop Right */}
+        {/* Desktop Right Actions */}
         <div className="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
             <>
               <Link
                 href="/trips/create"
-                className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors"
+                className={`flex items-center gap-1.5 text-sm font-semibold transition-colors ${
+                  isLandingPage && !isScrolled ? 'text-blue-100 hover:text-white' : 'text-slate-600 hover:text-mountain-blue'
+                }`}
               >
                 <PlusCircle className="h-4 w-4" />
                 Post a Trip
@@ -110,7 +117,7 @@ export default function NavbarClient() {
                   {userAvatar ? (
                     <img src={userAvatar} alt={userName ?? 'User'} className="w-7 h-7 rounded-full object-cover" />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
+                    <div className="w-7 h-7 rounded-full bg-mountain-blue text-white flex items-center justify-center text-xs font-bold">
                       {initials}
                     </div>
                   )}
@@ -120,7 +127,7 @@ export default function NavbarClient() {
                 </button>
 
                 {isProfileMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 z-50">
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-[20px] shadow-xl py-1.5 z-50">
                     <Link href="/profile" onClick={() => setIsProfileMenuOpen(false)}
                       className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-gray-50 transition-colors">
                       <User className="h-4 w-4 text-slate-400" /> My Profile
@@ -141,11 +148,15 @@ export default function NavbarClient() {
           ) : (
             <>
               <Link href="/auth/login"
-                className="text-sm font-semibold text-slate-500 hover:text-slate-900 px-3 py-1.5 transition-colors">
+                className={`text-sm font-semibold px-3 py-1.5 transition-colors ${
+                  isLandingPage && !isScrolled ? 'text-blue-100 hover:text-white' : 'text-slate-600 hover:text-mountain-blue'
+                }`}
+              >
                 Sign In
               </Link>
               <Link href="/auth/signup"
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-full shadow-sm transition-colors">
+                className="bg-mountain-blue hover:bg-blue-750 text-white text-sm font-bold px-5 py-2.5 rounded-[16px] shadow-md shadow-blue-900/10 transition-colors"
+              >
                 Get Started
               </Link>
             </>
@@ -155,7 +166,9 @@ export default function NavbarClient() {
         {/* Mobile Toggle */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="flex md:hidden p-2 text-slate-500 hover:text-slate-900 transition-colors"
+          className={`flex md:hidden p-2 transition-colors ${
+            isLandingPage && !isScrolled ? 'text-white' : 'text-slate-500 hover:text-slate-900'
+          }`}
         >
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -177,7 +190,7 @@ export default function NavbarClient() {
           {isLoggedIn ? (
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 py-1">
-                <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">{initials}</div>
+                <div className="w-8 h-8 rounded-full bg-mountain-blue text-white flex items-center justify-center text-xs font-bold">{initials}</div>
                 <span className="text-sm font-semibold text-slate-700 truncate">{userName ?? user?.email}</span>
               </div>
               <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 py-2 text-sm font-semibold text-slate-600">
@@ -195,7 +208,7 @@ export default function NavbarClient() {
               <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}
                 className="flex-1 text-center font-bold text-slate-600 border border-gray-200 py-2.5 rounded-xl">Sign In</Link>
               <Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}
-                className="flex-1 text-center font-bold bg-blue-600 text-white py-2.5 rounded-xl">Get Started</Link>
+                className="flex-1 text-center font-bold bg-mountain-blue text-white py-2.5 rounded-[16px]">Get Started</Link>
             </div>
           )}
         </div>

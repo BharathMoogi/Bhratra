@@ -32,68 +32,81 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  /* Bhratra Custom Brand Tokens */
+  --color-mountain-blue: #1E40AF;
+  --color-forest-green: #15803D;
+  --color-sunset-orange: #F97316;
+  --color-sky-blue: #38BDF8;
+  --color-slate-bg: #F8FAFC;
+  --color-card-bg: #FFFFFF;
+  --color-alt-bg: #F1F5F9;
+  
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94A3B8;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --background: #F8FAFC;
+  --foreground: #0F172A;
   
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
   
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
   
-  --primary: #0284c7; /* Sky blue primary for adventure and trust */
+  --primary: #1E40AF; /* Deep Mountain Blue */
   --primary-foreground: #ffffff;
   
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
+  --secondary: #15803D; /* Forest Green */
+  --secondary-foreground: #ffffff;
   
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
+  --muted: #94A3B8;
+  --muted-foreground: #475569;
   
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --accent: #F97316; /* Sunset Orange */
+  --accent-foreground: #ffffff;
   
-  --destructive: #ef4444;
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #0284c7;
+  --ring: #1E40AF;
   
-  --radius: 0.5rem;
+  --radius: 16px; /* Button style rounded 16px */
 }
 
 .dark {
-  --background: #0f172a;
-  --foreground: #f8fafc;
+  --background: #0B132B; /* Deep mountain night slate */
+  --foreground: #F8FAFC;
   
-  --card: #1e293b;
-  --card-foreground: #f8fafc;
+  --card: #1C2541;
+  --card-foreground: #F8FAFC;
   
-  --popover: #0f172a;
-  --popover-foreground: #f8fafc;
+  --popover: #0B132B;
+  --popover-foreground: #F8FAFC;
   
-  --primary: #38bdf8;
-  --primary-foreground: #0f172a;
+  --primary: #38BDF8; /* Sky Blue highlight for dark mode */
+  --primary-foreground: #0B132B;
   
-  --secondary: #1e293b;
-  --secondary-foreground: #f8fafc;
+  --secondary: #22C55E;
+  --secondary-foreground: #0B132B;
   
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
+  --muted: #475569;
+  --muted-foreground: #94A3B8;
   
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
+  --accent: #F97316;
+  --accent-foreground: #ffffff;
   
-  --destructive: #f87171;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   
-  --border: #334155;
-  --input: #334155;
-  --ring: #38bdf8;
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #38BDF8;
 }
 
 @layer base {
@@ -105,4 +118,23 @@
     color: var(--foreground);
     min-height: 100vh;
   }
+}
+
+/* Glassmorphism Preset utility */
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+}
+
+.dark .glass-card {
+  background: rgba(28, 37, 65, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(28, 37, 65, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border-radius: 24px;
 }

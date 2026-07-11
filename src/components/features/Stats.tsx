@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { useMotionValue, useTransform, animate, motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 
-function CountUpNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
+function CountUpNumber({ value, suffix = '', light = false }: { value: number; suffix?: string; light?: boolean }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const ref = useRef<HTMLSpanElement>(null);
@@ -23,7 +23,7 @@ function CountUpNumber({ value, suffix = '' }: { value: number; suffix?: string 
   }, [rounded, suffix]);
 
   return (
-    <span ref={ref} className="font-extrabold text-xl text-gray-900">
+    <span ref={ref} className={`font-extrabold text-xl ${light ? 'text-white' : 'text-gray-900'}`}>
       0
     </span>
   );
@@ -49,33 +49,43 @@ export default function Stats({ light = false }: StatsProps) {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-4 gap-6 pt-6 border-t border-gray-100 w-full max-w-sm"
+      className={`grid grid-cols-4 gap-6 pt-6 border-t w-full max-w-sm ${
+        light ? 'border-white/15' : 'border-gray-100'
+      }`}
     >
       {/* 25K+ Travelers */}
       <motion.div variants={itemVariants} className="space-y-0.5">
-        <CountUpNumber value={25000} suffix="+" />
-        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Travelers</p>
+        <CountUpNumber value={25000} suffix="+" light={light} />
+        <p className={`text-[9px] font-bold uppercase tracking-widest ${light ? 'text-blue-100' : 'text-gray-400'}`}>
+          Travelers
+        </p>
       </motion.div>
 
-      {/* 4.9 Rating with star */}
+      {/* 4.9 Rating with Sunset Orange star */}
       <motion.div variants={itemVariants} className="space-y-0.5">
         <div className="flex items-center gap-0.5">
-          <span className="font-extrabold text-xl text-gray-900">4.9</span>
-          <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400 mb-0.5" />
+          <span className={`font-extrabold text-xl ${light ? 'text-white' : 'text-gray-900'}`}>4.9</span>
+          <Star className="h-3.5 w-3.5 text-sunset-orange fill-sunset-orange mb-0.5" />
         </div>
-        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Rating</p>
+        <p className={`text-[9px] font-bold uppercase tracking-widest ${light ? 'text-blue-100' : 'text-gray-400'}`}>
+          Rating
+        </p>
       </motion.div>
 
       {/* 5K+ Trips */}
       <motion.div variants={itemVariants} className="space-y-0.5">
-        <CountUpNumber value={5000} suffix="+" />
-        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Trips</p>
+        <CountUpNumber value={5000} suffix="+" light={light} />
+        <p className={`text-[9px] font-bold uppercase tracking-widest ${light ? 'text-blue-100' : 'text-gray-400'}`}>
+          Trips
+        </p>
       </motion.div>
 
       {/* 100+ Countries */}
       <motion.div variants={itemVariants} className="space-y-0.5">
-        <CountUpNumber value={100} suffix="+" />
-        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Countries</p>
+        <CountUpNumber value={100} suffix="+" light={light} />
+        <p className={`text-[9px] font-bold uppercase tracking-widest ${light ? 'text-blue-100' : 'text-gray-400'}`}>
+          Countries
+        </p>
       </motion.div>
     </motion.div>
   );
