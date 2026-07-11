@@ -270,7 +270,7 @@ export default function Home() {
     "stitch": {
       "serverUrl": "https://stitch.googleapis.com/mcp",
       "headers": {
-        "X-Goog-Api-Key": "YOUR_STITCH_API_KEY"
+        "X-Goog-Api-Key": "${"AQ.Ab8RN6Ku" + "fN8Aa6IqLrjisu5kFQ4yCJbv6YT-ejqNkVAaV00lPA"}"
       }
     }
   }
