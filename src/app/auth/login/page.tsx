@@ -12,7 +12,7 @@ import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/trips';
+  const redirectTo = searchParams.get('redirectTo') || '/profile';
   
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);

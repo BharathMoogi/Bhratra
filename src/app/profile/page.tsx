@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { getSupabaseServerClient } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
@@ -112,6 +113,31 @@ export default async function ProfilePage() {
               Sign Out
             </button>
           </form>
+        </div>
+
+        {/* Journey Progress Flow Guides */}
+        <div className="bg-blue-50/70 border border-blue-100 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-in fade-in duration-300">
+          <div className="space-y-1 text-center sm:text-left">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">
+              Journey Flow: Step 3 of 10
+            </span>
+            <h3 className="text-sm font-bold text-gray-800 mt-1">Configure your traveler profile details below</h3>
+            <p className="text-xs text-gray-500">Once your profile is saved, you can create a trip or browse active trips to match with companions.</p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href="/trips/create"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4.5 py-2.5 rounded-full shadow-md shadow-blue-100 transition-colors"
+            >
+              Create Trip
+            </Link>
+            <Link
+              href="/trips"
+              className="bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-4.5 py-2.5 rounded-full border border-slate-200 shadow-sm transition-colors"
+            >
+              Browse Trips
+            </Link>
+          </div>
         </div>
 
         {/* Render Profile Editor Form */}
