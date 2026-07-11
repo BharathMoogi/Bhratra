@@ -1,13 +1,66 @@
 'use client';
 
-import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, MessageSquare, Check, Sparkles } from 'lucide-react';
+import { ArrowRight, MessageSquare, Check, Sparkles, Play, X, ChevronRight, ChevronLeft, Laptop, ShieldAlert, Navigation } from 'lucide-react';
 import Stats from './Stats';
+
+// Story slides data for the interactive storyteller
+const STORY_SLIDES = [
+  {
+    title: "1. The Dream",
+    subtitle: "Coding in Bengaluru, dreaming of peaks",
+    text: "Arjun, a software engineer in Bengaluru, spent long hours coding while dreaming of riding through the snow-capped peaks of the Himalayas. But finding companions with matching schedules and trust was nearly impossible.",
+    illustration: "coding",
+  },
+  {
+    title: "2. The Connection",
+    subtitle: "Bhratra safety & preference matching",
+    text: "Bhratra's matching engine connected him with 7 other verified motorcycle riders who shared his exact route preference, pace, and schedule. Verified IDs and reviews gave everyone peace of mind.",
+    illustration: "matching",
+  },
+  {
+    title: "3. The Conquering",
+    subtitle: "Conquering Khardung La together",
+    text: "Together, they conquered the Khardung La pass at 17,582 feet. What started as a post by strangers on a website became a lifelong bond of brotherhood.",
+    illustration: "conquering",
+  }
+];
 
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
+  const [isStoryOpen, setIsStoryOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [progress, setProgress] = useState(0);
+
+  // Auto-advance logic for storytelling slides
+  useEffect(() => {
+    if (!isStoryOpen) return;
+    setProgress(0);
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          setCurrentSlide((prevSlide) => (prevSlide + 1) % STORY_SLIDES.length);
+          return 0;
+        }
+        return prev + 1.25; // Speed of auto-advance (approx 4 seconds per slide)
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [isStoryOpen, currentSlide]);
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % STORY_SLIDES.length);
+    setProgress(0);
+  };
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev - 1 + STORY_SLIDES.length) % STORY_SLIDES.length);
+    setProgress(0);
+  };
 
   // Basic entry fade up animation
   const fadeUp = (delay = 0) => ({
@@ -59,6 +112,21 @@ export default function Hero() {
             >
               Arjun, a software engineer, dreamed of the Himalayas but had no one to ride with. Through Bhratra, he connected with 7 other verified enthusiasts. Together, they conquered the Khardung La pass, turning strangers into a lifelong brotherhood.
             </motion.p>
+
+            {/* Watch Story Play Trigger */}
+            <motion.button
+              {...fadeUp(0.26)}
+              onClick={() => { setIsStoryOpen(true); setCurrentSlide(0); setProgress(0); }}
+              className="inline-flex items-center gap-3 text-blue-600 hover:text-blue-700 font-bold text-xs tracking-wider uppercase transition-colors group focus:outline-none"
+            >
+              <span className="relative flex h-9 w-9">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-20"></span>
+                <span className="relative rounded-full bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center w-9 h-9 transition-colors border border-blue-100">
+                  <Play className="h-3 w-3 fill-blue-600 stroke-blue-600 ml-0.5" />
+                </span>
+              </span>
+              Watch Arjun's Journey
+            </motion.button>
 
             {/* CTA Buttons */}
             <motion.div {...fadeUp(0.3)} className="flex flex-row gap-3 pt-1">
@@ -247,6 +315,224 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      {/* ─── IMMERSIVE STORYTELLER MODAL ─── */}
+      <AnimatePresence>
+        {isStoryOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 p-6 sm:p-8"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsStoryOpen(false)}
+                className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-50 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              {/* Progress Bar Indicators at top */}
+              <div className="flex gap-1.5 mb-6">
+                {STORY_SLIDES.map((_, idx) => (
+                  <div key={idx} className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="bg-blue-600 h-full transition-all duration-75"
+                      style={{
+                        width:
+                          idx < currentSlide
+                            ? "100%"
+                            : idx === currentSlide
+                            ? `${progress}%`
+                            : "0%",
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Slide Content */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide}
+                  initial={{ opacity: 0, x: 15 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -15 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-6"
+                >
+                  {/* Category Header */}
+                  <div>
+                    <span className="text-[10px] font-bold tracking-widest text-blue-500 uppercase">
+                      {STORY_SLIDES[currentSlide].title}
+                    </span>
+                    <h3 className="text-xl font-extrabold text-gray-900 mt-1">
+                      {STORY_SLIDES[currentSlide].subtitle}
+                    </h3>
+                  </div>
+
+                  {/* Animated Visual/Illustration Area */}
+                  <div className="w-full h-40 bg-slate-50 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden relative">
+                    
+                    {/* Visual 1: Coding */}
+                    {STORY_SLIDES[currentSlide].illustration === "coding" && (
+                      <div className="flex flex-col items-center gap-3">
+                        <Laptop className="h-10 w-10 text-gray-400 animate-pulse" />
+                        <div className="w-48 space-y-1.5 flex flex-col items-center">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: "90%" }}
+                            transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+                            className="h-2 bg-blue-500/20 rounded-full"
+                          />
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: "65%" }}
+                            transition={{ duration: 1.2, delay: 0.3, repeat: Infinity, repeatType: "reverse" }}
+                            className="h-2 bg-blue-500/20 rounded-full"
+                          />
+                        </div>
+                        <span className="text-[10px] font-semibold text-gray-400 font-mono">localhost:3000</span>
+                      </div>
+                    )}
+
+                    {/* Visual 2: Matching */}
+                    {STORY_SLIDES[currentSlide].illustration === "matching" && (
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <motion.div
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="w-14 h-14 rounded-full bg-blue-50 border-2 border-blue-400 flex items-center justify-center text-blue-600 z-10"
+                        >
+                          <Sparkles className="h-6 w-6" />
+                        </motion.div>
+
+                        {/* Connected User Node Avatars */}
+                        {[
+                          { x: -55, y: -35, init: "AK" },
+                          { x: 55, y: -35, init: "RM" },
+                          { x: -60, y: 30, init: "SD" },
+                          { x: 60, y: 30, init: "JP" }
+                        ].map((node, i) => (
+                          <React.Fragment key={i}>
+                            {/* Connector line */}
+                            <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                              <motion.line
+                                x1="240"
+                                y1="80"
+                                x2={240 + node.x}
+                                y2={80 + node.y}
+                                stroke="#93c5fd"
+                                strokeWidth="1.5"
+                                strokeDasharray="4,4"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 1, delay: i * 0.2 }}
+                              />
+                            </svg>
+
+                            <motion.div
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ type: "spring", delay: 0.3 + i * 0.2 }}
+                              style={{ transform: `translate(${node.x}px, ${node.y}px)` }}
+                              className="absolute w-7 h-7 rounded-full bg-white border border-blue-200 shadow-md flex items-center justify-center text-[9px] font-bold text-blue-600"
+                            >
+                              {node.init}
+                            </motion.div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Visual 3: Conquering */}
+                    {STORY_SLIDES[currentSlide].illustration === "conquering" && (
+                      <div className="relative w-full h-full flex flex-col items-center justify-center">
+                        {/* Winding mountain road sketch */}
+                        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 160">
+                          <motion.path
+                            d="M 50 120 Q 150 60 250 110 T 350 70"
+                            stroke="#cbd5e1"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                          <motion.path
+                            d="M 50 120 Q 150 60 250 110 T 350 70"
+                            stroke="#10b981"
+                            strokeWidth="2"
+                            fill="none"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                          />
+                        </svg>
+
+                        <motion.div
+                          animate={{
+                            x: [-120, 120],
+                            y: [15, -15],
+                          }}
+                          transition={{
+                            duration: 5,
+                            repeat: Infinity,
+                            ease: "linear"
+                          }}
+                          className="absolute bg-white px-2.5 py-1 rounded-full border border-gray-100 shadow-lg flex items-center gap-1 z-10"
+                        >
+                          <Navigation className="h-3 w-3 text-blue-600 rotate-45" />
+                          <span className="text-[9px] font-bold text-gray-800">17,582 ft</span>
+                        </motion.div>
+                      </div>
+                    )}
+
+                  </div>
+
+                  {/* Narrative Text */}
+                  <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                    {STORY_SLIDES[currentSlide].text}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Navigation Controls */}
+              <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-50">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePrev}
+                    className="p-2 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors focus:outline-none"
+                    aria-label="Previous slide"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="p-2 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors focus:outline-none"
+                    aria-label="Next slide"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setIsStoryOpen(false)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full text-xs transition-colors focus:outline-none"
+                >
+                  Join Like Arjun
+                </button>
+              </div>
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
