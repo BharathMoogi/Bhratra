@@ -92,7 +92,7 @@ export default async function ProfilePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-10 w-full space-y-6">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-10 pt-28 w-full space-y-6">
         
         {/* Header section with Sign Out button */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">

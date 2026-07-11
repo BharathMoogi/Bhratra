@@ -41,7 +41,7 @@ export default async function TripChatPage({
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-8 pt-24 w-full space-y-6">
         
         {/* Header link back */}
         <div className="flex items-center gap-3 pb-2">

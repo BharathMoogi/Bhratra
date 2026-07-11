@@ -12,7 +12,7 @@ import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/';
+  const redirectTo = searchParams.get('redirectTo') || '/trips';
   
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -52,7 +52,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-secondary/30">
+    <div className="flex min-h-screen flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         <Link href="/" className="inline-flex items-center gap-2 text-3xl font-extrabold bg-gradient-to-r from-primary to-sky-500 bg-clip-text text-transparent">
           Bhratra

@@ -62,7 +62,7 @@ export default async function AdminPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full space-y-6">
+      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 py-8 pt-24 w-full space-y-6">
         
         {/* Header Title */}
         <div className="flex items-center gap-3 pb-4 border-b border-border">

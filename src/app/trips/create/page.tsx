@@ -78,7 +78,7 @@ export default function CreateTripPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 w-full">
+      <main className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 pt-24 w-full">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Create a New Trip</h1>
           <p className="text-muted-foreground">Define your route, budget, and find compatible travel companions.</p>

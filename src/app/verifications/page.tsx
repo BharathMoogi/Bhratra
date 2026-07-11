@@ -27,7 +27,7 @@ export default function VerificationPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full">
+      <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-12 pt-24 w-full">
         <div className="text-center space-y-4">
           <Shield className="h-16 w-16 text-primary mx-auto stroke-[1.5]" />
           <h1 className="text-4xl font-extrabold tracking-tight">Traveler Trust & Verification</h1>

@@ -81,7 +81,7 @@ export default async function TravelerProfilePage({
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-10 w-full space-y-8">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-10 pt-24 w-full space-y-8">
         
         {/* Header link back */}
         <div className="flex items-center gap-3 pb-2 border-b border-border">

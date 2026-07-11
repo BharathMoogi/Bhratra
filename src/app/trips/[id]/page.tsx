@@ -127,7 +127,7 @@ export default async function TripDetailsPage({
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
+      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pt-24 w-full space-y-8">
         
         {/* Banner details */}
         <div className="border border-border bg-card p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">

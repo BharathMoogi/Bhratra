@@ -87,7 +87,7 @@ export default async function EditTripPage({
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 w-full space-y-6">
+      <main className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 pt-24 w-full space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-border">
           <Link href={`/trips/${id}`} className="p-2 hover:bg-secondary rounded-full transition-colors">
             <ArrowLeft className="h-5 w-5" />
