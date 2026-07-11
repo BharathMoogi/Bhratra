@@ -1,60 +1,73 @@
 import Link from 'next/link';
+import { Compass, Globe, Share2 } from 'lucide-react';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="w-full bg-secondary border-t border-border mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Discover</h3>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/trips?type=ROAD_TRIP" className="hover:text-foreground transition-colors">Road Trips</Link></li>
-              <li><Link href="/trips?type=BIKE_RIDE" className="hover:text-foreground transition-colors">Bike Rides</Link></li>
-              <li><Link href="/trips?type=TREKKING" className="hover:text-foreground transition-colors">Trekking & Hiking</Link></li>
-              <li><Link href="/trips?type=INTERNATIONAL" className="hover:text-foreground transition-colors">International Journeys</Link></li>
+    <footer className="w-full bg-white border-t border-gray-100 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+
+          {/* Brand Column */}
+          <div className="md:col-span-1 space-y-4">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="font-extrabold text-xl text-blue-600 tracking-tight">Bhratra</span>
+            </Link>
+            <p className="text-sm text-gray-500 leading-relaxed max-w-[200px]">
+              Revolutionizing travel through community and trust. Connecting explorers to create memories that last a lifetime.
+            </p>
+            {/* Social icons */}
+            <div className="flex items-center gap-3 pt-1">
+              <a
+                href="#"
+                aria-label="Globe"
+                className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:border-blue-200 transition-colors"
+              >
+                <Globe className="h-3.5 w-3.5" />
+              </a>
+              <a
+                href="#"
+                aria-label="Share"
+                className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:border-blue-200 transition-colors"
+              >
+                <Share2 className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Company */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold text-gray-800 uppercase tracking-widest">Company</h3>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li><Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link></li>
+              <li><Link href="/careers" className="hover:text-blue-600 transition-colors">Careers</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Safety & Trust</h3>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/safety/verification" className="hover:text-foreground transition-colors">Verification Process</Link></li>
-              <li><Link href="/safety/guidelines" className="hover:text-foreground transition-colors">Community Guidelines</Link></li>
-              <li><Link href="/safety/tips" className="hover:text-foreground transition-colors">Travel Safety Tips</Link></li>
-              <li><Link href="/safety/reporting" className="hover:text-foreground transition-colors">Report an Issue</Link></li>
+
+          {/* Resources */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold text-gray-800 uppercase tracking-widest">Resources</h3>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li><Link href="/safety" className="hover:text-blue-600 transition-colors">Safety Guide</Link></li>
+              <li><Link href="/community" className="hover:text-blue-600 transition-colors">Community Stories</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Bhratra</h3>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/about" className="hover:text-foreground transition-colors">About Us</Link></li>
-              <li><Link href="/careers" className="hover:text-foreground transition-colors">Careers</Link></li>
-              <li><Link href="/blog" className="hover:text-foreground transition-colors">Travel Blog</Link></li>
-              <li><Link href="/press" className="hover:text-foreground transition-colors">Press</Link></li>
+
+          {/* Support */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold text-gray-800 uppercase tracking-widest">Support</h3>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li><Link href="/legal/privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/legal/terms" className="hover:text-blue-600 transition-colors">Terms of Service</Link></li>
+              <li><Link href="/contact" className="hover:text-blue-600 transition-colors">Contact Us</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Legal</h3>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/legal/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/legal/terms" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
-              <li><Link href="/legal/cookies" className="hover:text-foreground transition-colors">Cookie Settings</Link></li>
-            </ul>
-          </div>
+
         </div>
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-lg font-bold bg-gradient-to-r from-primary to-sky-500 bg-clip-text text-transparent">
-              Bhratra
-            </span>
-            <span className="text-xs text-muted-foreground">
-              © {currentYear} Bhratra Technologies. All rights reserved.
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground max-w-md text-center md:text-right">
-            Bhratra is a platform designed to connect travelers. Always verify companion credentials, meet in public spaces prior to trip departure, and travel responsibly.
-          </p>
+
+        {/* Bottom bar */}
+        <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-xs text-gray-400">© 2024 Bhratra. All rights reserved.</p>
+          <p className="text-xs text-gray-400">Made with ♡ for explorers</p>
         </div>
       </div>
     </footer>

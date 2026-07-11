@@ -29,7 +29,6 @@ export default function Navbar() {
     { label: 'How It Works', href: '#how-it-works' },
     { label: 'Safety', href: '#safety' },
     { label: 'Community', href: '#community' },
-    { label: 'About', href: '#about' },
   ];
 
   return (
