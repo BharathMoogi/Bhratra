@@ -69,7 +69,12 @@ export async function middleware(request: NextRequest) {
 
   // If authenticated user tries to visit login/signup/forgot-password pages
   if (isAuthRoute && user && !path.startsWith('/auth/callback') && !path.startsWith('/auth/reset-password')) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/trips', request.url));
+  }
+
+  // If authenticated user visits the public landing page (/), redirect them directly to the dashboard (/trips)
+  if (path === '/' && user) {
+    return NextResponse.redirect(new URL('/trips', request.url));
   }
 
   return response;
