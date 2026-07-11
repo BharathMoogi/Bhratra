@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Shield, Compass, Calendar, Users, MapPin, ArrowRight, CheckCircle, Star } from 'lucide-react';
+import { Shield, Compass, Calendar, Users, MapPin, ArrowRight, CheckSquare, MessageSquare, ShieldCheck, Lock, Sparkles, Star } from 'lucide-react';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 
@@ -57,7 +57,7 @@ export default function Home() {
     {
       title: 'Safe Spaces & Preferences',
       description: 'Set custom filters. Create gender-specific trips (e.g. women-only trekking) to feel completely secure.',
-      icon: CheckCircle,
+      icon: ShieldCheck,
     },
   ];
 
@@ -65,113 +65,138 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32 bg-gradient-to-b from-background to-secondary/30">
+      {/* 1. Cinematic Storytelling Hero Section */}
+      <section className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-b from-background to-secondary/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
-                <Shield className="h-4 w-4" />
-                100% Verified Companions
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                Don't Cancel Your Trip Just Because{' '}
+            
+            {/* Left Column: Storytelling Narrative */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05]">
+                Never Travel<br />
                 <span className="bg-gradient-to-r from-primary to-sky-500 bg-clip-text text-transparent">
-                  Friends Flaked
+                  Alone Again.
                 </span>
               </h1>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0">
-                Bhratra helps verified adventurers discover road trips, treks, bike rides, and backpacking journeys. Connect with compatible travelers and explore safely.
+
+              {/* Arjun quotes testimonial */}
+              <div className="border-l-4 border-primary pl-4 py-1 italic text-md text-primary bg-primary/5 rounded-r-xl max-w-lg">
+                "I was just another dev in Bengaluru until I found my tribe."
+              </div>
+
+              {/* Story introduction */}
+              <p className="text-base text-muted-foreground leading-relaxed max-w-xl">
+                Arjun, a software engineer, dreamed of the Himalayas but had no one to ride with. Through Bhratra, he connected with 7 other verified enthusiasts. Together, they conquered the Khardung La pass, turning strangers into a lifelong brotherhood.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
                 <Link
-                  href="/trips"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-4 rounded-full text-base font-semibold shadow-md transition-all duration-200"
+                  href="/auth/signup"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3.5 rounded-full text-sm font-bold shadow-md transition-colors"
                 >
-                  Explore Active Trips
-                  <ArrowRight className="h-5 w-5" />
+                  Start Your Journey
+                  <ArrowRight className="h-4.5 w-4.5" />
                 </Link>
                 <Link
-                  href="/trips/create"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-background border border-border hover:bg-secondary text-foreground px-8 py-4 rounded-full text-base font-semibold transition-all duration-200"
+                  href="/trips"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-background border border-border hover:bg-secondary text-foreground px-8 py-3.5 rounded-full text-sm font-bold transition-colors"
                 >
-                  Create a Trip
+                  Explore Trips
                 </Link>
               </div>
               
-              {/* Quick stats */}
-              <div className="pt-8 border-t border-border grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+              {/* Quick stats grid */}
+              <div className="pt-8 border-t border-border grid grid-cols-4 gap-4 max-w-lg">
                 <div>
-                  <div className="text-2xl font-bold">12K+</div>
-                  <div className="text-xs text-muted-foreground">Trips Completed</div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-foreground">25K+</div>
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Travelers</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">45K+</div>
-                  <div className="text-xs text-muted-foreground">Verified Members</div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-foreground flex items-center gap-0.5">
+                    4.9
+                  </div>
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Rating</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">4.9/5</div>
-                  <div className="text-xs text-muted-foreground">Trip Rating</div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-foreground">5K+</div>
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Trips</div>
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-foreground">100+</div>
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Countries</div>
                 </div>
               </div>
             </div>
 
-            {/* Right Visual (High fidelity UI card mockup) */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-[380px] rounded-3xl border border-border bg-card p-6 shadow-2xl space-y-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-primary">Active Trip Mock</span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-medium">
-                    2 Seats Left
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">Leh-Manali Bike Expedition</h3>
-                  <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5 text-primary" /> Manali to Leh, Himalayas
+            {/* Right Column: Pixar Illustration Card & Value Grid */}
+            <div className="lg:col-span-5 space-y-6">
+              
+              {/* Pixar mountain illustration card */}
+              <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl aspect-video w-full group">
+                <img
+                  src="/himalaya_expedition_hero.png"
+                  alt="Himalayan motorcycle expedition illustration"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 flex flex-col justify-end">
+                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Featured Expedition</span>
+                  <h4 className="text-white font-bold text-lg mt-1">Leh-Manali Adventure Ride</h4>
+                  <p className="text-white/70 text-xs mt-0.5 flex items-center gap-1">
+                    <MapPin className="h-3 w-3 text-emerald-400" /> Bengaluru to Leh Rider Tribe
                   </p>
                 </div>
-                
-                <div className="space-y-3 bg-secondary/50 p-4 rounded-2xl border border-border">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Dates:</span>
-                    <span className="font-semibold">Aug 12 - Aug 22</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Trip Type:</span>
-                    <span className="font-semibold">Bike Ride</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Budget:</span>
-                    <span className="font-semibold text-emerald-500">Moderate</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-white font-bold text-sm">
-                    AK
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-semibold truncate">Amit Kapoor</span>
-                      <Shield className="h-4 w-4 text-primary fill-primary/20" />
-                    </div>
-                    <div className="flex items-center gap-0.5 text-amber-500">
-                      <Star className="h-3.5 w-3.5 fill-amber-500" />
-                      <span className="text-xs font-bold text-foreground ml-1">4.9</span>
-                      <span className="text-xs text-muted-foreground">(24 reviews)</span>
-                    </div>
-                  </div>
-                </div>
-
-                <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-xl text-sm font-semibold transition-all duration-200">
-                  Request to Join Group
-                </button>
               </div>
-              {/* Decorative accent gradients */}
-              <div className="absolute -z-10 -top-6 -right-6 w-72 h-72 bg-primary/20 rounded-full blur-3xl" />
-              <div className="absolute -z-10 -bottom-6 -left-6 w-72 h-72 bg-sky-400/20 rounded-full blur-3xl" />
+
+              {/* 2x2 Feature badges grid */}
+              <div className="grid grid-cols-2 gap-4 bg-card border border-border p-5 rounded-3xl shadow-lg">
+                
+                {/* 1. Verified Travelers */}
+                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
+                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
+                    <ShieldCheck className="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground">Verified Travelers</h4>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Government ID safety checks.</p>
+                  </div>
+                </div>
+
+                {/* 2. Safe Community */}
+                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
+                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
+                    <Lock className="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground">Safe Community</h4>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Gender-specific filters.</p>
+                  </div>
+                </div>
+
+                {/* 3. Smart Matching */}
+                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
+                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
+                    <Sparkles className="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground">Smart Matching</h4>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Preferences & behavior filters.</p>
+                  </div>
+                </div>
+
+                {/* 4. Secure Chat */}
+                <div className="p-3.5 rounded-2xl bg-secondary/35 border border-border/30 flex flex-col gap-2">
+                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary w-fit">
+                    <MessageSquare className="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground">Secure Chat</h4>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Realtime companion planning.</p>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
           </div>
         </div>
@@ -297,7 +322,7 @@ export default function Home() {
               Sign Up Now
             </Link>
             <Link
-              href="/about"
+              href="/trips"
               className="w-full sm:w-auto bg-secondary hover:bg-secondary/80 text-foreground border border-border px-8 py-4 rounded-full text-base font-semibold transition-all duration-200"
             >
               Learn How It Works
