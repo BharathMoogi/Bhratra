@@ -6,10 +6,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema, SignUpInput } from '@/lib/validation/auth';
 import { signUpAction, signInWithGoogleAction } from '../actions';
-import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Shield, Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function SignupPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -29,11 +30,13 @@ export default function SignupPage() {
 
   const onSubmit = async (data: SignUpInput) => {
     setErrorMsg(null);
+    setSuccessMsg(null);
     const res = await signUpAction(data);
     if (res?.error) {
       setErrorMsg(res.error);
+    } else if (res?.success) {
+      setSuccessMsg(res.message || 'Registration successful! Please check your inbox.');
     }
-    // On success, server redirects to /profile automatically
   };
 
   const handleGoogleLogin = async () => {
@@ -45,6 +48,30 @@ export default function SignupPage() {
       setIsGoogleLoading(false);
     }
   };
+
+  if (successMsg) {
+    return (
+      <div className="flex min-h-screen flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-secondary/30">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-card py-10 px-6 border border-border shadow-lg rounded-2xl sm:px-10 text-center space-y-6">
+            <CheckCircle2 className="h-16 w-16 text-emerald-500 mx-auto stroke-[1.5]" />
+            <h2 className="text-2xl font-bold text-foreground">Confirm Your Email</h2>
+            <p className="text-sm text-muted-foreground">
+              {successMsg}
+            </p>
+            <div className="pt-4">
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-full text-sm shadow-sm transition-colors"
+              >
+                Go to Login
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-secondary/30">
