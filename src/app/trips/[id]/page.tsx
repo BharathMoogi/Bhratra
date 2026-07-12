@@ -14,10 +14,15 @@ import { MapPin, Calendar, Shield, Users, ShieldCheck, Car, Trash2, Edit, AlertC
 
 export default async function TripDetailsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ join_error?: string; joined?: string }>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
+  const joinError = sp?.join_error || null;
+  const joinedSuccess = sp?.joined === '1';
 
   // 1. Fetch Trip details along with members, requests, and owner profile
   const trip = await prisma.trip.findFirst({
@@ -94,8 +99,11 @@ export default async function TripDetailsPage({
   const handleJoin = async (formData: FormData) => {
     'use server';
     const message = formData.get('message') as string;
-    await joinTripAction(id, message);
-    redirect(`/trips/${id}`);
+    const result = await joinTripAction(id, message);
+    if (result?.error) {
+      redirect(`/trips/${id}?join_error=${encodeURIComponent(result.error)}`);
+    }
+    redirect(`/trips/${id}?joined=1`);
   };
 
   const handleCancel = async () => {
@@ -396,7 +404,18 @@ export default async function TripDetailsPage({
               <div className="border border-border bg-card p-6 rounded-3xl shadow-sm space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">My Status</h3>
                 
-                {isMember ? (
+                {/* Not logged in — prompt to sign in */}
+                {!user ? (
+                  <div className="space-y-3">
+                    <p className="text-xs text-muted-foreground">Sign in to apply to join this trip.</p>
+                    <Link
+                      href={`/auth/login?next=/trips/${id}`}
+                      className="w-full inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                    >
+                      Sign in to Apply
+                    </Link>
+                  </div>
+                ) : isMember ? (
                   <div className="space-y-4">
                     <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-500 font-semibold flex items-center gap-1.5">
                       <Check className="h-4 w-4" /> You are an accepted companion.
@@ -440,6 +459,18 @@ export default async function TripDetailsPage({
                   </button>
                 ) : (
                   <form action={handleJoin} className="space-y-4">
+                    {/* Success banner */}
+                    {joinedSuccess && (
+                      <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-600 font-semibold flex items-center gap-1.5">
+                        <Check className="h-4 w-4" /> Application sent! Waiting for organizer approval.
+                      </div>
+                    )}
+                    {/* Error banner */}
+                    {joinError && (
+                      <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-600 font-semibold flex items-center gap-1.5">
+                        <AlertCircle className="h-4 w-4" /> {joinError}
+                      </div>
+                    )}
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Message to Organizer</label>
                       <textarea
