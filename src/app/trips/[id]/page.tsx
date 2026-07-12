@@ -5,24 +5,19 @@ import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import {
-  joinTripAction,
   cancelJoinRequestAction,
   deleteTripAction,
   manageJoinRequestAction,
 } from '../actions';
+import JoinTripForm from '@/components/features/JoinTripForm';
 import { MapPin, Calendar, Shield, Users, ShieldCheck, Car, Trash2, Edit, AlertCircle, Check, X, Clock } from 'lucide-react';
 
 export default async function TripDetailsPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ join_error?: string; joined?: string }>;
 }) {
   const { id } = await params;
-  const sp = await searchParams;
-  const joinError = sp?.join_error || null;
-  const joinedSuccess = sp?.joined === '1';
 
   // 1. Fetch Trip details along with members, requests, and owner profile
   const trip = await prisma.trip.findFirst({
@@ -96,16 +91,6 @@ export default async function TripDetailsPage({
   const isTripFull = seatsRemaining <= 0;
 
   // Form submit server action wrappers
-  const handleJoin = async (formData: FormData) => {
-    'use server';
-    const message = formData.get('message') as string;
-    const result = await joinTripAction(id, message);
-    if (result?.error) {
-      redirect(`/trips/${id}?join_error=${encodeURIComponent(result.error)}`);
-    }
-    redirect(`/trips/${id}?joined=1`);
-  };
-
   const handleCancel = async () => {
     'use server';
     await cancelJoinRequestAction(id);
@@ -458,47 +443,7 @@ export default async function TripDetailsPage({
                     Trip Group is Full
                   </button>
                 ) : (
-                  <form action={handleJoin} className="space-y-4">
-                    {/* Success banner */}
-                    {joinedSuccess && (
-                      <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-600 font-semibold flex items-center gap-1.5">
-                        <Check className="h-4 w-4" /> Application sent! Waiting for organizer approval.
-                      </div>
-                    )}
-                    {/* Error banner */}
-                    {joinError && (
-                      <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-600 font-semibold space-y-2">
-                        <div className="flex items-start gap-1.5">
-                          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" /> 
-                          <span>{joinError}</span>
-                        </div>
-                        {joinError.toLowerCase().includes('verif') && (
-                          <Link
-                            href="/verifications"
-                            className="inline-flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
-                          >
-                            <ShieldCheck className="h-3.5 w-3.5" />
-                            Get Verified →
-                          </Link>
-                        )}
-                      </div>
-                    )}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Message to Organizer</label>
-                      <textarea
-                        name="message"
-                        rows={3}
-                        placeholder="Say hello, share your driving/hiking experience..."
-                        className="w-full bg-background border border-border rounded-xl p-3 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
-                    >
-                      Apply to Join Trip
-                    </button>
-                  </form>
+                  <JoinTripForm tripId={id} />
                 )}
               </div>
             )}
