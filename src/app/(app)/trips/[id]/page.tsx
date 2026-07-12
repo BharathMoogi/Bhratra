@@ -7,8 +7,8 @@ import Footer from '@/components/shared/Footer';
 import {
   cancelJoinRequestAction,
   deleteTripAction,
-  manageJoinRequestAction,
 } from '@/app/(app)/trips/actions';
+import ManageRequestForm from '@/components/features/ManageRequestForm';
 import JoinTripForm from '@/components/features/JoinTripForm';
 import { MapPin, Calendar, Shield, Users, ShieldCheck, Car, Trash2, Edit, AlertCircle, Check, X, Clock } from 'lucide-react';
 
@@ -101,20 +101,6 @@ export default async function TripDetailsPage({
     'use server';
     await deleteTripAction(id);
     redirect('/trips');
-  };
-
-  const handleApprove = async (formData: FormData) => {
-    'use server';
-    const requestId = formData.get('requestId') as string;
-    await manageJoinRequestAction(requestId, true);
-    redirect(`/trips/${id}`);
-  };
-
-  const handleReject = async (formData: FormData) => {
-    'use server';
-    const requestId = formData.get('requestId') as string;
-    await manageJoinRequestAction(requestId, false);
-    redirect(`/trips/${id}`);
   };
 
   return (
@@ -296,28 +282,7 @@ export default async function TripDetailsPage({
                           </div>
 
                           {/* Action controls */}
-                          <div className="flex gap-2">
-                            <form action={handleApprove}>
-                              <input type="hidden" name="requestId" value={req.id} />
-                              <button
-                                type="submit"
-                                className="p-1.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 transition-colors"
-                                title="Approve Request"
-                              >
-                                <Check className="h-5 w-5" />
-                              </button>
-                            </form>
-                            <form action={handleReject}>
-                              <input type="hidden" name="requestId" value={req.id} />
-                              <button
-                                type="submit"
-                                className="p-1.5 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors"
-                                title="Reject Request"
-                              >
-                                <X className="h-5 w-5" />
-                              </button>
-                            </form>
-                          </div>
+                          <ManageRequestForm requestId={req.id} tripId={id} />
                         </div>
 
                         {req.message && (

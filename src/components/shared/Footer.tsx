@@ -9,8 +9,12 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div className="md:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="font-extrabold text-xl text-mountain-blue tracking-tight">Bhratra</span>
+            <Link href="/" className="flex items-center">
+              <img 
+                src="/logo.png" 
+                alt="Bhratra Logo" 
+                className="h-16 w-auto object-contain mix-blend-multiply"
+              />
             </Link>
             <p className="text-sm text-text-secondary leading-relaxed max-w-[220px]">
               Revolutionizing travel through community and trust. Connecting explorers to create memories that last a lifetime.

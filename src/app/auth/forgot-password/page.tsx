@@ -35,8 +35,12 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-secondary/30">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
-        <Link href="/" className="text-3xl font-extrabold bg-gradient-to-r from-primary to-sky-500 bg-clip-text text-transparent">
-          Bhratra
+        <Link href="/" className="inline-flex items-center justify-center">
+          <img 
+            src="/logo.png" 
+            alt="Bhratra Logo" 
+            className="h-20 w-auto object-contain mix-blend-multiply"
+          />
         </Link>
         <h2 className="text-3xl font-bold tracking-tight text-foreground">
           Reset Password

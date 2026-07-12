@@ -77,12 +77,12 @@ export default function NavbarClient() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center">
-          <span className={`font-extrabold text-xl tracking-tight transition-colors ${
-            isLandingPage && !isScrolled ? 'text-white' : 'text-mountain-blue'
-          }`}>
-            Bhratra
-          </span>
+        <Link href="/" className="flex items-center gap-2">
+          <img 
+            src="/logo.png" 
+            alt="Bhratra Logo" 
+            className="h-12 w-auto object-contain mix-blend-multiply"
+          />
         </Link>
 
         {/* Desktop Nav Links */}

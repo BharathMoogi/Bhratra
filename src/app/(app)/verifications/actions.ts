@@ -56,12 +56,17 @@ export async function submitVerificationAction(formData: FormData) {
     }
 
     // Save verification details and immediately mark as verified for instant companion eligibility
-    await prisma.profile.update({
+    await prisma.profile.upsert({
       where: { id: user.id },
-      data: {
+      update: {
         isVerified: true,
         verificationDoc: publicUrl,
       },
+      create: {
+        id: user.id,
+        isVerified: true,
+        verificationDoc: publicUrl,
+      }
     });
 
     revalidatePath('/verifications');
