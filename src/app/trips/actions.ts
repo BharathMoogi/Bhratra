@@ -243,23 +243,28 @@ export async function joinTripAction(tripId: string, applicantMessage?: string) 
       },
     });
 
-    // 5. Trigger in-app notification for the trip owner
-    await prisma.notification.create({
-      data: {
-        userId: trip.ownerId,
-        senderId: user.id,
-        type: 'TRIP_REQUEST',
-        title: 'New Join Request',
-        content: `A traveler wants to join your trip: "${trip.title}"`,
-        link: `/trips/${tripId}`,
-      },
-    });
+    // 5. Trigger in-app notification for the trip owner (non-fatal)
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: trip.ownerId,
+          senderId: user.id,
+          type: 'TRIP_REQUEST',
+          title: 'New Join Request',
+          content: `A traveler wants to join your trip: "${trip.title}"`,
+          link: `/trips/${tripId}`,
+        },
+      });
+    } catch (notifErr) {
+      console.error('Notification creation failed (non-fatal):', notifErr);
+    }
 
     revalidatePath(`/trips/${tripId}`);
+    revalidatePath('/trips');
     return { success: true };
   } catch (err: any) {
     console.error('Join trip error:', err);
-    return { error: 'Failed to send join request.' };
+    return { error: err?.message || 'Failed to send join request.' };
   }
 }
 
