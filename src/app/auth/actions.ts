@@ -50,7 +50,7 @@ export async function signUpAction(formData: z.infer<typeof signUpSchema>) {
         },
       });
 
-      // 2. Direct base profile creation in database (in case verification is bypassed or disabled)
+      // 2. Direct base profile creation in database
       await prisma.profile.upsert({
         where: { id: user.id },
         update: {
@@ -64,11 +64,13 @@ export async function signUpAction(formData: z.infer<typeof signUpSchema>) {
       });
     } catch (dbError) {
       console.error('Signup database sync error:', dbError);
-      // Suppress database sync error so the user still sees verification email instructions
     }
+
+    // Auto sign-in immediately after signup (bypasses email confirmation)
+    await supabase.auth.signInWithPassword({ email, password });
   }
 
-  return { success: true, message: 'Please check your email to verify your account.' };
+  redirect('/profile');
 }
 
 // Sign In with Email/Password
