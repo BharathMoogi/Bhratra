@@ -139,7 +139,7 @@ export default function NavbarClient({ initialUser = null }: NavbarClientProps) 
                   className="flex items-center gap-2 rounded-full border border-gray-200 bg-white hover:bg-gray-50 pl-1 pr-3 py-1 shadow-sm transition-colors"
                 >
                   {userAvatar ? (
-                    <Image src={userAvatar} alt={userName ?? 'User'} width={28} height={28} className="w-7 h-7 rounded-full object-cover" />
+                    <img src={userAvatar} alt={userName ?? 'User'} className="w-7 h-7 rounded-full object-cover" />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-mountain-blue text-white flex items-center justify-center text-xs font-bold">
                       {initials}

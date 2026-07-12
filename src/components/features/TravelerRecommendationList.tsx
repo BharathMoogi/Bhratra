@@ -82,12 +82,10 @@ export default function TravelerRecommendationList({ travelers, tripId }: Travel
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-full bg-secondary border border-border overflow-hidden flex items-center justify-center relative flex-shrink-0">
                       {traveler.avatarUrl ? (
-                        <Image
+                        <img
                           src={traveler.avatarUrl}
                           alt={traveler.fullName || 'Traveler'}
-                          fill
-                          className="object-cover"
-                          sizes="44px"
+                          className="w-full h-full object-cover"
                         />
                       ) : (
                         <span className="font-bold text-sm text-muted-foreground">
