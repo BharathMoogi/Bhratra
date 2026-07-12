@@ -147,14 +147,14 @@ export default function NavbarClient() {
             </>
           ) : (
             <>
-              <Link href="/auth/login"
+              <Link href="/login"
                 className={`text-sm font-semibold px-3 py-1.5 transition-colors ${
                   isLandingPage && !isScrolled ? 'text-blue-100 hover:text-white' : 'text-slate-600 hover:text-mountain-blue'
                 }`}
               >
                 Sign In
               </Link>
-              <Link href="/auth/signup"
+              <Link href="/signup"
                 className="bg-mountain-blue hover:bg-blue-750 text-white text-sm font-bold px-5 py-2.5 rounded-[16px] shadow-md shadow-blue-900/10 transition-colors"
               >
                 Get Started
@@ -205,9 +205,9 @@ export default function NavbarClient() {
             </div>
           ) : (
             <div className="flex gap-3">
-              <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}
+               <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}
                 className="flex-1 text-center font-bold text-slate-600 border border-gray-200 py-2.5 rounded-xl">Sign In</Link>
-              <Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}
+              <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}
                 className="flex-1 text-center font-bold bg-mountain-blue text-white py-2.5 rounded-[16px]">Get Started</Link>
             </div>
           )}

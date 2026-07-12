@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { listTripsAction } from './actions';
+import { listTripsAction } from '@/app/(app)/trips/actions';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import { MapPin, Calendar, Compass, Shield, Search, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight, Users, Car, Star, ArrowUpDown } from 'lucide-react';

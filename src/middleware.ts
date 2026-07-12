@@ -53,23 +53,33 @@ export async function middleware(request: NextRequest) {
 
   // Define route rules
   const isProtectedRoute = 
+    path.startsWith('/dashboard') ||
+    path.startsWith('/trips') ||
+    path.startsWith('/create-trip') ||
+    path.startsWith('/messages') ||
     path.startsWith('/profile') || 
-    path.startsWith('/trips/create') || 
+    path.startsWith('/notifications') ||
+    path.startsWith('/settings') ||
     path.startsWith('/verifications');
 
-  const isAuthRoute = path.startsWith('/auth');
+  const isAuthOrLandingRoute = 
+    path === '/' ||
+    path === '/login' ||
+    path === '/signup' ||
+    path.startsWith('/auth/login') ||
+    path.startsWith('/auth/signup');
 
   // If unauthenticated user tries to access a protected route
   if (isProtectedRoute && !user) {
-    const redirectUrl = new URL('/auth/login', request.url);
+    const redirectUrl = new URL('/login', request.url);
     // Remember where the user was trying to go so we can redirect them back after login
     redirectUrl.searchParams.set('redirectTo', path);
     return NextResponse.redirect(redirectUrl);
   }
 
-  // If authenticated user tries to visit login/signup/forgot-password pages
-  if (isAuthRoute && user && !path.startsWith('/auth/callback') && !path.startsWith('/auth/reset-password')) {
-    return NextResponse.redirect(new URL('/trips', request.url));
+  // If authenticated user tries to visit landing page or login/signup routes
+  if (isAuthOrLandingRoute && user && !path.startsWith('/auth/callback') && !path.startsWith('/auth/reset-password')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return response;

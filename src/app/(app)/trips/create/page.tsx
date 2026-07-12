@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { tripSchema, TripInput } from '@/lib/validation/trip';
-import { createTripAction } from '../actions';
+import { createTripAction } from '@/app/(app)/trips/actions';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import { Loader2, Plus, X } from 'lucide-react';

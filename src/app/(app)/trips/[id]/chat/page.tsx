@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getTripChatContextAction } from './actions';
+import { getTripChatContextAction } from '@/app/(app)/trips/[id]/chat/actions';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import TripChat from '@/components/features/TripChat';

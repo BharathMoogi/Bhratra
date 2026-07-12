@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { joinTripAction } from '@/app/trips/actions';
+import { joinTripAction } from '@/app/(app)/trips/actions';
 import { AlertCircle, Check, Loader2, ShieldCheck } from 'lucide-react';
 
 interface JoinTripFormProps {

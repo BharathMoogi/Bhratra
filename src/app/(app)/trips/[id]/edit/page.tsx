@@ -19,7 +19,7 @@ export default async function EditTripPage({
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    redirect('/auth/login');
+    redirect('/login');
   }
 
   // Fetch the trip details from database

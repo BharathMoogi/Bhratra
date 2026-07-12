@@ -13,7 +13,7 @@ export default async function AdminPage() {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    redirect('/auth/login');
+    redirect('/login');
   }
 
   // 1. Enforce access control: check user role inside database

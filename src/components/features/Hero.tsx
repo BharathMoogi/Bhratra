@@ -172,7 +172,7 @@ export default function Hero() {
             <motion.div {...fadeUp(0.3)} className="flex flex-row gap-3 pt-1">
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 <Link
-                  href="/auth/signup"
+                  href="/signup"
                   className="inline-flex items-center gap-2 bg-mountain-blue hover:bg-blue-700 text-white font-semibold px-6 py-3.5 rounded-[16px] shadow-lg shadow-blue-900/30 transition-colors text-sm"
                 >
                   Start Your Journey

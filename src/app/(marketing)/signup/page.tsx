@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signUpSchema, SignUpInput } from '@/lib/validation/auth';
-import { signUpAction, signInWithGoogleAction } from '../actions';
+import { signUpAction, signInWithGoogleAction } from '@/app/auth/actions';
 import { Shield, Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function SignupPage() {
@@ -200,7 +200,7 @@ export default function SignupPage() {
           {/* Redirect to Login */}
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
-            <Link href="/auth/login" className="font-semibold text-primary hover:underline">
+            <Link href="/login" className="font-semibold text-primary hover:underline">
               Sign In
             </Link>
           </p>

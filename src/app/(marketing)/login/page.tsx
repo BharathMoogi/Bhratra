@@ -6,13 +6,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginInput } from '@/lib/validation/auth';
-import { signInAction, signInWithGoogleAction } from '../actions';
+import { signInAction, signInWithGoogleAction } from '@/app/auth/actions';
 import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/profile';
+  const redirectTo = searchParams.get('redirectTo') || '/dashboard';
   
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -159,7 +159,7 @@ function LoginForm() {
           {/* Redirect to Register */}
           <p className="mt-6 text-center text-sm text-muted-foreground">
             New to Bhratra?{' '}
-            <Link href="/auth/signup" className="font-semibold text-primary hover:underline">
+            <Link href="/signup" className="font-semibold text-primary hover:underline">
               Create an Account
             </Link>
           </p>

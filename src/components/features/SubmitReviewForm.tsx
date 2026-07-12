@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { submitReviewAction } from '@/app/profile/reviews/actions';
+import { submitReviewAction } from '@/app/(app)/profile/reviews/actions';
 import { Star, Loader2 } from 'lucide-react';
 
 interface SubmitReviewFormProps {

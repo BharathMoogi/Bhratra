@@ -8,7 +8,7 @@ import {
   cancelJoinRequestAction,
   deleteTripAction,
   manageJoinRequestAction,
-} from '../actions';
+} from '@/app/(app)/trips/actions';
 import JoinTripForm from '@/components/features/JoinTripForm';
 import { MapPin, Calendar, Shield, Users, ShieldCheck, Car, Trash2, Edit, AlertCircle, Check, X, Clock } from 'lucide-react';
 
@@ -394,7 +394,7 @@ export default async function TripDetailsPage({
                   <div className="space-y-3">
                     <p className="text-xs text-muted-foreground">Sign in to apply to join this trip.</p>
                     <Link
-                      href={`/auth/login?next=/trips/${id}`}
+                      href={`/login?redirectTo=/trips/${id}`}
                       className="w-full inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
                     >
                       Sign in to Apply

@@ -15,7 +15,7 @@ export default function CTAButtons() {
         className="w-full sm:w-auto"
       >
         <Link
-          href="/auth/signup"
+          href="/signup"
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/95 px-8 py-3.5 rounded-full text-sm font-bold shadow-md shadow-primary/10 transition-colors"
         >
           Start Your Journey

@@ -129,7 +129,7 @@ export async function signInWithGoogleAction() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${getAppUrl()}/auth/callback?next=/profile`,
+      redirectTo: `${getAppUrl()}/auth/callback?next=/dashboard`,
     },
   });
 
@@ -148,7 +148,7 @@ export async function signInWithGoogleAction() {
 export async function signOutAction() {
   const supabase = await getSupabaseServerClient();
   await supabase.auth.signOut();
-  redirect('/auth/login');
+  redirect('/login');
 }
 
 // Request Password Reset Link

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase';
-import { sendChatMessageAction, uploadChatAttachmentAction, updateLastReadAction } from '@/app/trips/[id]/chat/actions';
+import { sendChatMessageAction, uploadChatAttachmentAction, updateLastReadAction } from '@/app/(app)/trips/[id]/chat/actions';
 import { ChatMessage, ChatReadState } from '@/types';
 import { Send, Image, FileText, Smile, Search, ArrowLeft, Loader2, ShieldCheck, CheckCheck } from 'lucide-react';
 import Link from 'next/link';

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileSchema, ProfileInput } from '@/lib/validation/profile';
-import { updateProfileAction, uploadAvatarAction } from '@/app/profile/actions';
+import { updateProfileAction, uploadAvatarAction } from '@/app/(app)/profile/actions';
 import { UserProfile } from '@/types';
 import { User, Phone, AlignLeft, Info, HelpCircle, Loader2, Check, ShieldCheck, Camera } from 'lucide-react';
 

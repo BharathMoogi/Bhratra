@@ -14,7 +14,7 @@ export default async function ProfilePage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/auth/login');
+    redirect('/login');
   }
 
   // Fetch traveler user and profile details from database

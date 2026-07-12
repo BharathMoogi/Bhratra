@@ -6,7 +6,7 @@ import {
   Shield, Check, Clock, ShieldCheck, Mail, FileText, 
   Upload, X, AlertCircle, Loader2, Sparkles, CheckCircle2 
 } from 'lucide-react';
-import { submitVerificationAction } from '@/app/verifications/actions';
+import { submitVerificationAction } from '@/app/(app)/verifications/actions';
 
 interface VerificationClientProps {
   initialProfile: {
