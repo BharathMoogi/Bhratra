@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   description: 'Connect with verified travel companions for road trips, trekking, bike rides, backpacking, and international journeys. Travel safely with compatible partners.',
   keywords: 'travel companion, find travel partners, verified travel, road trip companions, trekking partners, bike trips, backpacking group, weekend trips',
   authors: [{ name: 'Bhratra Architecture Group' }],
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({
