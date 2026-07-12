@@ -467,8 +467,20 @@ export default async function TripDetailsPage({
                     )}
                     {/* Error banner */}
                     {joinError && (
-                      <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-600 font-semibold flex items-center gap-1.5">
-                        <AlertCircle className="h-4 w-4" /> {joinError}
+                      <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-600 font-semibold space-y-2">
+                        <div className="flex items-start gap-1.5">
+                          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" /> 
+                          <span>{joinError}</span>
+                        </div>
+                        {joinError.toLowerCase().includes('verif') && (
+                          <Link
+                            href="/verifications"
+                            className="inline-flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                          >
+                            <ShieldCheck className="h-3.5 w-3.5" />
+                            Get Verified →
+                          </Link>
+                        )}
                       </div>
                     )}
                     <div className="space-y-1.5">
