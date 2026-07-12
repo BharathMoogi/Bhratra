@@ -58,7 +58,7 @@ function LoginForm() {
           <img 
             src="/logo.png" 
             alt="Bhratra Logo" 
-            className="h-20 w-auto object-contain mix-blend-multiply"
+            className="h-14 w-auto object-contain mx-auto"
           />
         </Link>
         <h2 className="text-3xl font-bold tracking-tight text-foreground">

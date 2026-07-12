@@ -13,7 +13,7 @@ export default function Footer() {
               <img 
                 src="/logo.png" 
                 alt="Bhratra Logo" 
-                className="h-16 w-auto object-contain mix-blend-multiply"
+                className="h-14 w-auto object-contain"
               />
             </Link>
             <p className="text-sm text-text-secondary leading-relaxed max-w-[220px]">

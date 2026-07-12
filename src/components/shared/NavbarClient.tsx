@@ -78,11 +78,13 @@ export default function NavbarClient() {
 
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <img 
-            src="/logo.png" 
-            alt="Bhratra Logo" 
-            className="h-12 w-auto object-contain mix-blend-multiply"
-          />
+          <div className={`rounded-xl overflow-hidden transition-all duration-300 ${isTransparent ? 'bg-white/90 p-1.5 shadow-lg backdrop-blur-sm' : ''}`}>
+            <img 
+              src="/logo.png" 
+              alt="Bhratra Logo" 
+              className="h-10 sm:h-12 w-auto object-contain"
+            />
+          </div>
         </Link>
 
         {/* Desktop Nav Links */}
