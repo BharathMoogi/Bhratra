@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
@@ -10,6 +10,8 @@ import {
 } from '@/app/(app)/trips/actions';
 import ManageRequestForm from '@/components/features/ManageRequestForm';
 import JoinTripForm from '@/components/features/JoinTripForm';
+import TravelerRecommendationList from '@/components/features/TravelerRecommendationList';
+import { calculateCompatibility } from '@/lib/matching';
 import { MapPin, Calendar, Shield, Users, ShieldCheck, Car, Trash2, Edit, AlertCircle, Check, X, Clock } from 'lucide-react';
 
 export default async function TripDetailsPage({
@@ -19,38 +21,41 @@ export default async function TripDetailsPage({
 }) {
   const { id } = await params;
 
-  // 1. Fetch Trip details along with members, requests, and owner profile
-  const trip = await prisma.trip.findFirst({
-    where: { id: id, deletedAt: null },
-    include: {
-      owner: {
-        include: {
-          profile: true,
+  // 1. Fetch Trip details and Auth user context in parallel
+  const [trip, user] = await Promise.all([
+    prisma.trip.findFirst({
+      where: { id: id, deletedAt: null },
+      include: {
+        owner: {
+          include: {
+            profile: true,
+          },
         },
-      },
-      members: {
-        include: {
-          user: {
-            include: {
-              profile: true,
+        members: {
+          include: {
+            user: {
+              include: {
+                profile: true,
+              },
+            },
+          },
+        },
+        requests: {
+          where: {
+            status: 'PENDING',
+          },
+          include: {
+            user: {
+              include: {
+                profile: true,
+              },
             },
           },
         },
       },
-      requests: {
-        where: {
-          status: 'PENDING',
-        },
-        include: {
-          user: {
-            include: {
-              profile: true,
-            },
-          },
-        },
-      },
-    },
-  });
+    }),
+    getCachedUser(),
+  ]);
 
   if (!trip) {
     return (
@@ -67,10 +72,6 @@ export default async function TripDetailsPage({
     );
   }
 
-  // 2. Fetch authenticated user context
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
   const isOwner = user?.id === trip.ownerId;
   const isMember = trip.members.some((m) => m.userId === user?.id);
   
@@ -85,6 +86,41 @@ export default async function TripDetailsPage({
         },
       })
     : null;
+
+  // 3. For organizers: fetch top 10 recommended travel companions
+  let compatibleTravelers: any[] = [];
+  if (isOwner && user) {
+    const allTravelers = await prisma.user.findMany({
+      where: {
+        id: { not: user.id },
+        role: 'USER',
+        status: 'ACTIVE',
+        profile: { isNot: null },
+      },
+      include: {
+        profile: true,
+      },
+    });
+
+    compatibleTravelers = allTravelers
+      .map((t) => {
+        const comp = calculateCompatibility(t.profile!, trip);
+        return {
+          id: t.id,
+          fullName: t.profile!.fullName,
+          avatarUrl: t.profile!.avatarUrl,
+          rating: t.profile!.rating,
+          interests: t.profile!.interests,
+          languages: t.profile!.languages,
+          bikeType: (t.profile as any).bikeType,
+          ridingExperience: (t.profile as any).ridingExperience,
+          travelStyle: (t.profile as any).travelStyle,
+          compatibility: comp,
+        };
+      })
+      .sort((a, b) => b.compatibility.score - a.compatibility.score)
+      .slice(0, 10);
+  }
 
   const approvedMembersCount = trip.members.length; // Includes organizer
   const seatsRemaining = Math.max(0, trip.maxCapacity - approvedMembersCount);
@@ -296,6 +332,13 @@ export default async function TripDetailsPage({
                 )}
               </div>
             )}
+
+            {/* Owner only: AI Traveler Recommendations */}
+            {isOwner && (
+              <div className="border border-border bg-card p-6 rounded-3xl shadow-sm">
+                <TravelerRecommendationList travelers={compatibleTravelers} tripId={id} />
+              </div>
+            )}
           </div>
 
           {/* Right panel: Application Actions (4cols) */}
@@ -306,14 +349,22 @@ export default async function TripDetailsPage({
               <div className="border border-border bg-card p-6 rounded-3xl shadow-sm space-y-3.5">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Trip Coordination</h3>
                 <p className="text-xs text-muted-foreground">
-                  Coordinate routes, stops, and schedules in the realtime group chat.
+                  Coordinate routes, custom markers, and view traveler locations on the live map or group chat.
                 </p>
-                <Link
-                  href={`/trips/${id}/chat`}
-                  className="w-full inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
-                >
-                  Open Group Chat
-                </Link>
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href={`/trips/${id}/map`}
+                    className="w-full inline-flex items-center justify-center bg-primary hover:bg-primary/95 text-primary-foreground py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
+                  >
+                    Interactive Trip Map
+                  </Link>
+                  <Link
+                    href={`/trips/${id}/chat`}
+                    className="w-full inline-flex items-center justify-center bg-secondary hover:bg-border text-foreground py-2.5 rounded-xl text-sm font-semibold transition-colors border border-border"
+                  >
+                    Open Group Chat
+                  </Link>
+                </div>
               </div>
             )}
             

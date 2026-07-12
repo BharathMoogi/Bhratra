@@ -29,6 +29,9 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [languageInput, setLanguageInput] = useState('');
   const [languages, setLanguages] = useState<string[]>(initialProfile.languages || []);
 
+  const [destinationInput, setDestinationInput] = useState('');
+  const [preferredDestinations, setPreferredDestinations] = useState<string[]>(initialProfile.preferredDestinations || []);
+
   const formattedBirthDate = initialProfile.birthDate 
     ? new Date(initialProfile.birthDate).toISOString().split('T')[0] 
     : '';
@@ -50,6 +53,11 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
       smoking: initialProfile.smoking || false,
       interests: initialProfile.interests || [],
       languages: initialProfile.languages || [],
+      bikeType: initialProfile.bikeType || '',
+      ridingExperience: initialProfile.ridingExperience || '',
+      travelStyle: initialProfile.travelStyle || '',
+      budgetPref: initialProfile.budgetPref || '',
+      preferredDestinations: initialProfile.preferredDestinations || [],
     },
   });
 
@@ -60,8 +68,9 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
     // Inject local tags state
     data.interests = interests;
     data.languages = languages;
+    data.preferredDestinations = preferredDestinations;
 
-    const res = await updateProfileAction(data);
+    const res = await updateProfileAction(data as any);
     if (res?.error) {
       setErrorMsg(res.error);
     } else {
@@ -127,6 +136,24 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
     const updated = languages.filter((l) => l !== item);
     setLanguages(updated);
     setValue('languages', updated);
+  };
+
+  const addDestination = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && destinationInput.trim()) {
+      e.preventDefault();
+      if (!preferredDestinations.includes(destinationInput.trim()) && preferredDestinations.length < 10) {
+        const updated = [...preferredDestinations, destinationInput.trim()];
+        setPreferredDestinations(updated);
+        setValue('preferredDestinations', updated);
+        setDestinationInput('');
+      }
+    }
+  };
+
+  const removeDestination = (item: string) => {
+    const updated = preferredDestinations.filter((d) => d !== item);
+    setPreferredDestinations(updated);
+    setValue('preferredDestinations', updated);
   };
 
   return (
@@ -285,6 +312,68 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
           </div>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Bike Type */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-foreground">Bike Type (Preferred / Owned)</label>
+            <select
+              {...register('bikeType')}
+              className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+            >
+              <option value="">None / Commuter</option>
+              <option value="Cruiser">Cruiser (e.g. Royal Enfield, Cruiser)</option>
+              <option value="Sports">Sports (e.g. KTM, Yamaha, Sports)</option>
+              <option value="Adventure">Adventure (e.g. Himalayan, ADV)</option>
+              <option value="Scooter">Scooter / Moped</option>
+            </select>
+          </div>
+
+          {/* Riding Experience */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-foreground">Riding Experience Level</label>
+            <select
+              {...register('ridingExperience')}
+              className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+            >
+              <option value="">Select Level</option>
+              <option value="Beginner">Beginner (1-2 years, local rides)</option>
+              <option value="Intermediate">Intermediate (2-5 years, weekend tours)</option>
+              <option value="Expert">Expert (5+ years, highway / off-road)</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Travel Style */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-foreground">Travel Style preference</label>
+            <select
+              {...register('travelStyle')}
+              className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+            >
+              <option value="">Select Style</option>
+              <option value="Adventure">Adventure (Trekking, off-road, rugged)</option>
+              <option value="Backpacking">Backpacking (Low budget, hostels, exploring)</option>
+              <option value="Leisure">Leisure (Relaxing, scenic spots, family-style)</option>
+              <option value="Luxury">Luxury (Comfortable stay, hotels, resort tours)</option>
+            </select>
+          </div>
+
+          {/* Budget Preference */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-foreground">Trip Budget Preference</label>
+            <select
+              {...register('budgetPref')}
+              className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+            >
+              <option value="">Select Budget</option>
+              <option value="BUDGET">Budget (Low cost, minimal expense)</option>
+              <option value="MODERATE">Moderate (Covers shared comfortable costs)</option>
+              <option value="LUXURY">Luxury (Comfort and high class stays)</option>
+            </select>
+          </div>
+        </div>
+
         {/* Interests Tags */}
         <div className="space-y-2">
           <label className="text-sm font-semibold text-foreground">Interests / Activities (Press Enter to Add)</label>
@@ -336,6 +425,36 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
                 <button
                   type="button"
                   onClick={() => removeLanguage(item)}
+                  className="text-muted-foreground hover:text-foreground font-bold"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Preferred Destinations Tags */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-foreground">Preferred Destinations (Press Enter to Add)</label>
+          <input
+            type="text"
+            value={destinationInput}
+            onChange={(e) => setDestinationInput(e.target.value)}
+            onKeyDown={addDestination}
+            placeholder="e.g. Rishikesh, Ladakh, Bangalore, Manali"
+            className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+          <div className="flex flex-wrap gap-2 mt-2">
+            {preferredDestinations.map((item, idx) => (
+              <span
+                key={idx}
+                className="inline-flex items-center gap-1 bg-secondary border border-border px-3 py-1 rounded-full text-xs font-semibold text-foreground"
+              >
+                {item}
+                <button
+                  type="button"
+                  onClick={() => removeDestination(item)}
                   className="text-muted-foreground hover:text-foreground font-bold"
                 >
                   ×

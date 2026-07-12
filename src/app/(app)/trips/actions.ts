@@ -1,10 +1,11 @@
 'use server';
 
 import prisma from '@/lib/db';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getSupabaseServerClient, getCachedUser } from '@/lib/supabase-server';
 import { tripSchema, updateTripSchema, TripInput, UpdateTripInput } from '@/lib/validation/trip';
 import { revalidatePath } from 'next/cache';
 import { TripType, BudgetRange, TripStatus, RequestStatus, Difficulty } from '@/types';
+import { calculateCompatibility } from '@/lib/matching';
 
 // Create a new Trip (runs in transaction to auto-add creator as Organizer)
 export async function createTripAction(formData: TripInput) {
@@ -522,11 +523,32 @@ export async function listTripsAction(
       );
     }
 
+    // Fetch logged-in user profile to calculate compatibility
+    const user = await getCachedUser();
+    let userProfile = null;
+    if (user) {
+      userProfile = await prisma.profile.findUnique({
+        where: { id: user.id },
+      });
+    }
+
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
       success: true,
-      trips: JSON.parse(JSON.stringify(filteredTrips)), // Serialize Dates for Client safety
+      // Serialize only the Date fields that Next.js cannot pass across the server/client boundary.
+      // Much faster than a full JSON.parse(JSON.stringify()) deep-clone of the whole result set.
+      trips: filteredTrips.map((trip) => {
+        const compatibility = userProfile ? calculateCompatibility(userProfile, trip) : null;
+        return {
+          ...trip,
+          startDate: trip.startDate.toISOString(),
+          endDate: trip.endDate.toISOString(),
+          createdAt: trip.createdAt.toISOString(),
+          updatedAt: trip.updatedAt.toISOString(),
+          compatibility,
+        };
+      }),
       totalCount,
       totalPages,
       currentPage: page,
@@ -534,5 +556,172 @@ export async function listTripsAction(
   } catch (err: any) {
     console.error('List trips action error:', err);
     return { error: 'Failed to fetch trips from server.' };
+  }
+}
+
+// Save or update coordinates and route path for a trip
+export async function saveTripCoordinatesAction(
+  tripId: string,
+  startLat: number,
+  startLng: number,
+  endLat: number,
+  endLng: number,
+  routePath: string | null
+) {
+  const user = await getCachedUser();
+  if (!user) return { error: 'Unauthorized' };
+
+  try {
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+      select: { ownerId: true }
+    });
+
+    if (!trip) return { error: 'Trip not found' };
+    if (trip.ownerId !== user.id) return { error: 'Only the organizer can edit route coordinates' };
+
+    await prisma.trip.update({
+      where: { id: tripId },
+      data: {
+        startLat,
+        startLng,
+        endLat,
+        endLng,
+        routePath
+      }
+    });
+
+    revalidatePath(`/trips/${tripId}`);
+    revalidatePath(`/trips/${tripId}/map`);
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error saving trip coordinates:', error);
+    return { error: 'Failed to update route coordinates' };
+  }
+}
+
+// Add a custom marker (meeting point, rest stop, etc.) on the trip map
+export async function addTripMarkerAction(
+  tripId: string,
+  title: string,
+  description: string | null,
+  lat: number,
+  lng: number,
+  type: string
+) {
+  const user = await getCachedUser();
+  if (!user) return { error: 'Unauthorized' };
+
+  try {
+    // Verify membership or ownership
+    const isMemberOrOwner = await prisma.tripMember.findFirst({
+      where: {
+        tripId,
+        userId: user.id
+      }
+    });
+
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+      select: { ownerId: true }
+    });
+
+    if (!trip) return { error: 'Trip not found' };
+    if (trip.ownerId !== user.id && !isMemberOrOwner) {
+      return { error: 'Only participants can add markers to this trip map' };
+    }
+
+    const marker = await prisma.tripMapMarker.create({
+      data: {
+        tripId,
+        title,
+        description,
+        lat,
+        lng,
+        type,
+        createdById: user.id
+      }
+    });
+
+    revalidatePath(`/trips/${tripId}/map`);
+    return { success: true, marker };
+  } catch (error: any) {
+    console.error('Error adding map marker:', error);
+    return { error: 'Failed to add map marker' };
+  }
+}
+
+// Delete a custom marker
+export async function deleteTripMarkerAction(markerId: string) {
+  const user = await getCachedUser();
+  if (!user) return { error: 'Unauthorized' };
+
+  try {
+    const marker = await prisma.tripMapMarker.findUnique({
+      where: { id: markerId },
+      include: { trip: true }
+    });
+
+    if (!marker) return { error: 'Marker not found' };
+
+    // Organizer or creator of marker can delete
+    if (marker.createdById !== user.id && marker.trip.ownerId !== user.id) {
+      return { error: 'Unauthorized' };
+    }
+
+    await prisma.tripMapMarker.delete({
+      where: { id: markerId }
+    });
+
+    revalidatePath(`/trips/${marker.tripId}/map`);
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error deleting map marker:', error);
+    return { error: 'Failed to delete map marker' };
+  }
+}
+
+// Update a participant's shared location
+export async function updateMemberLocationAction(
+  tripId: string,
+  lat: number | null,
+  lng: number | null,
+  shareLocation: boolean
+) {
+  const user = await getCachedUser();
+  if (!user) return { error: 'Unauthorized' };
+
+  try {
+    const member = await prisma.tripMember.findUnique({
+      where: {
+        tripId_userId: {
+          tripId,
+          userId: user.id
+        }
+      }
+    });
+
+    if (!member) return { error: 'You are not a member of this trip' };
+
+    await prisma.tripMember.update({
+      where: {
+        tripId_userId: {
+          tripId,
+          userId: user.id
+        }
+      },
+      data: {
+        latitude: lat,
+        longitude: lng,
+        shareLocation,
+        locationUpdatedAt: lat !== null ? new Date() : null
+      }
+    });
+
+    revalidatePath(`/trips/${tripId}/map`);
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error updating member location:', error);
+    return { error: 'Failed to update shared location' };
   }
 }

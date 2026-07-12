@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginInput } from '@/lib/validation/auth';
-import { signInAction, signInWithGoogleAction } from '@/app/auth/actions';
-import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { signInAction } from '@/app/auth/actions';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
@@ -16,7 +16,11 @@ function LoginForm() {
   
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Prefetch dashboard/destination page assets immediately when login form renders
+  useEffect(() => {
+    router.prefetch(redirectTo);
+  }, [router, redirectTo]);
 
   const {
     register,
@@ -41,15 +45,6 @@ function LoginForm() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setErrorMsg(null);
-    setIsGoogleLoading(true);
-    const res = await signInWithGoogleAction();
-    if (res?.error) {
-      setErrorMsg(res.error);
-      setIsGoogleLoading(false);
-    }
-  };
 
   return (
     <div className="flex min-h-screen flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
@@ -133,32 +128,6 @@ function LoginForm() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground font-semibold">Or continue with</span>
-            </div>
-          </div>
-
-          {/* Social Sign-In */}
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={isGoogleLoading}
-            className="w-full flex items-center justify-center gap-2.5 bg-background border border-border hover:bg-secondary py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
-          >
-            {isGoogleLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-            ) : (
-              <svg className="h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
-              </svg>
-            )}
-            Google
-          </button>
 
           {/* Redirect to Register */}
           <p className="mt-6 text-center text-sm text-muted-foreground">

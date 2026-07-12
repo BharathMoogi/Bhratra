@@ -32,6 +32,11 @@ export async function updateProfileAction(formData: ProfileInput) {
         languages: result.data.languages,
         dietary: result.data.dietary,
         smoking: result.data.smoking,
+        bikeType: result.data.bikeType,
+        ridingExperience: result.data.ridingExperience,
+        travelStyle: result.data.travelStyle,
+        budgetPref: result.data.budgetPref,
+        preferredDestinations: result.data.preferredDestinations,
       },
     });
 

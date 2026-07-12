@@ -10,46 +10,38 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    
+
     if (!error && data.user) {
       const user = data.user;
-      
-      // Sync auth user account and details to database
-      try {
-        // 1. Ensure User model is present
-        let dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-        });
 
-        if (!dbUser) {
-          dbUser = await prisma.user.create({
-            data: {
+      try {
+        const fullName = user.user_metadata?.full_name || user.user_metadata?.name || null;
+        const avatarUrl = user.user_metadata?.avatar_url || null;
+
+        // Parallel upserts — one DB round-trip each, running concurrently
+        // Replaces the previous sequential findUnique → create pattern
+        await Promise.all([
+          prisma.user.upsert({
+            where: { id: user.id },
+            update: {},
+            create: {
               id: user.id,
               email: user.email!,
               role: 'USER',
               status: 'ACTIVE',
             },
-          });
-        }
-
-        // 2. Ensure Profile details model is present
-        const existingProfile = await prisma.profile.findUnique({
-          where: { id: user.id },
-        });
-
-        if (!existingProfile) {
-          const fullName = user.user_metadata?.full_name || user.user_metadata?.name || null;
-          const avatarUrl = user.user_metadata?.avatar_url || null;
-
-          await prisma.profile.create({
-            data: {
+          }),
+          prisma.profile.upsert({
+            where: { id: user.id },
+            update: {},
+            create: {
               id: user.id,
-              fullName: fullName,
-              avatarUrl: avatarUrl,
+              fullName,
+              avatarUrl,
               isVerified: false,
             },
-          });
-        }
+          }),
+        ]);
       } catch (dbError) {
         console.error('Database user/profile sync failed in callback:', dbError);
       }

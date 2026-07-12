@@ -1,20 +1,20 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import { MessageSquare, ArrowRight, Calendar, Users, MapPin } from 'lucide-react';
 
 export default async function MessagesOverviewPage() {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // getCachedUser() — shared memoized lookup across all Server Components
+  const user = await getCachedUser();
 
   if (!user) {
     redirect('/login');
   }
 
-  // Fetch all trips user is part of (as member or owner)
+  // Fetch all trips the user is part of (as member or owner)
   const myTrips = await prisma.trip.findMany({
     where: {
       deletedAt: null,
@@ -24,16 +24,8 @@ export default async function MessagesOverviewPage() {
       ],
     },
     include: {
-      owner: {
-        include: { profile: true },
-      },
-      members: {
-        include: {
-          user: {
-            include: { profile: true },
-          },
-        },
-      },
+      owner: { include: { profile: true } },
+      members: { include: { user: { include: { profile: true } } } },
       messages: {
         orderBy: { createdAt: 'desc' },
         take: 1,
@@ -55,28 +47,22 @@ export default async function MessagesOverviewPage() {
 
         {myTrips.length === 0 ? (
           <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-12 text-center max-w-lg mx-auto space-y-4">
-            <div className="p-4 bg-blue-50 text-mountain-blue rounded-full w-fit mx-auto">
+            <div className="p-4 bg-slate-100 text-slate-400 rounded-full w-fit mx-auto">
               <MessageSquare className="h-8 w-8" />
             </div>
             <h3 className="text-lg font-bold text-slate-800">No Chat Rooms Yet</h3>
             <p className="text-sm text-slate-500">
-              Join an existing trip or create your own group to activate real-time chat rooms with travel companions.
+              Join or create a trip to start chatting with your travel companions.
             </p>
-            <div className="pt-2">
-              <Link
-                href="/trips"
-                className="bg-mountain-blue hover:bg-blue-700 text-white text-xs font-bold px-6 py-3 rounded-full shadow-md transition-colors"
-              >
-                Browse Trips
-              </Link>
-            </div>
+            <Link href="/trips" className="bg-mountain-blue hover:bg-blue-700 text-white text-xs font-bold px-6 py-3 rounded-full shadow-md transition-colors">
+              Browse Trips
+            </Link>
           </div>
         ) : (
           <div className="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm divide-y divide-slate-100">
             {myTrips.map((trip) => {
               const lastMessage = trip.messages[0];
               const participantCount = trip.members.length + 1; // Members + Owner
-              
               return (
                 <div key={trip.id} className="p-6 hover:bg-slate-50/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-2 min-w-0 flex-1">
@@ -88,21 +74,12 @@ export default async function MessagesOverviewPage() {
                         <Users className="h-3 w-3" /> {participantCount} travelers
                       </span>
                     </div>
-
-                    <h3 className="font-bold text-base text-slate-800 truncate">
-                      {trip.title}
-                    </h3>
-
+                    <h3 className="font-bold text-base text-slate-800 truncate">{trip.title}</h3>
                     {lastMessage ? (
-                      <p className="text-sm text-slate-500 italic truncate max-w-xl">
-                        "{lastMessage.content}"
-                      </p>
+                      <p className="text-sm text-slate-500 italic truncate max-w-xl">&quot;{lastMessage.content}&quot;</p>
                     ) : (
-                      <p className="text-sm text-slate-400 italic">
-                        No messages sent yet. Start the conversation!
-                      </p>
+                      <p className="text-sm text-slate-400 italic">No messages sent yet. Start the conversation!</p>
                     )}
-
                     <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
                       <span className="flex items-center gap-0.5"><MapPin className="h-3.5 w-3.5" /> {trip.endLocation}</span>
                       <span className="flex items-center gap-0.5">
@@ -111,7 +88,6 @@ export default async function MessagesOverviewPage() {
                       </span>
                     </div>
                   </div>
-
                   <div className="shrink-0 flex sm:flex-col items-end justify-between sm:justify-center gap-2">
                     <Link
                       href={`/trips/${trip.id}/chat`}

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, MessageSquare, Check, Sparkles, Play, X, ChevronRight, ChevronLeft, Laptop, Navigation } from 'lucide-react';
 import Stats from './Stats';
 
@@ -33,6 +34,9 @@ export default function Hero() {
   const [isStoryOpen, setIsStoryOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [progress, setProgress] = useState(0);
+  // Only run infinite background animations when the section is in the viewport
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: false, margin: '0px 0px -100px 0px' });
 
   // Auto-advance logic for storytelling slides
   useEffect(() => {
@@ -85,7 +89,8 @@ export default function Hero() {
         };
 
   return (
-    <section 
+    <section
+      ref={sectionRef}
       className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden w-full"
     >
       {/* ─── Hero Gradient Background (always visible, z-0) ─── */}
@@ -96,8 +101,8 @@ export default function Hero() {
         }}
       />
 
-      {/* ─── Natural Drifting Clouds (Visual Storytelling Effect) ─── */}
-      {!shouldReduceMotion && (
+      {/* ─── Natural Drifting Clouds — only animated when section is in viewport ─── */}
+      {!shouldReduceMotion && isInView && (
         <>
           <motion.div
             animate={{ x: [-80, 80, -80] }}
@@ -203,10 +208,14 @@ export default function Hero() {
               {...fadeUp(0.2)}
               className="relative w-[340px] sm:w-[420px] aspect-[4/3] rounded-[24px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.18)] border border-white/20 z-10"
             >
-              <img
+              {/* next/image — auto-converts to WebP, lazy-loads off-screen, prevents layout shift */}
+              <Image
                 src="/himalaya_expedition_hero.png"
                 alt="Ladakh Expedition"
-                className="w-full h-full object-cover animate-pulse-slow"
+                fill
+                priority
+                className="object-cover animate-pulse-slow"
+                sizes="(max-width: 640px) 340px, 420px"
               />
               {/* Dark overlay for text contrast */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />

@@ -2,38 +2,57 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Compass, LogOut, User, PlusCircle } from 'lucide-react';
-import { createBrowserClient } from '@supabase/ssr';
+// Use the module-level singleton — avoids creating a new client + WebSocket on every mount
+import { getSupabaseBrowserClient } from '@/lib/supabase';
 import { signOutAction } from '@/app/auth/actions';
-import type { User as SupabaseUser, SupabaseClient } from '@supabase/supabase-js';
+import type { User as SupabaseUser, AuthChangeEvent, Session } from '@supabase/supabase-js';
 
-export default function NavbarClient() {
+interface NavbarClientProps {
+  /**
+   * User passed from the Navbar Server Component on first render.
+   * Eliminates the client-side auth round-trip on initial paint — no flash
+   * of unauthenticated state. NavbarClient still subscribes to
+   * onAuthStateChange so subsequent sign-in/out events update the UI.
+   */
+  initialUser?: SupabaseUser | null;
+}
+
+export default function NavbarClient({ initialUser = null }: NavbarClientProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  // Seed state from server-passed user — avoids the getUser() round-trip on mount
+  const [user, setUser] = useState<SupabaseUser | null>(initialUser);
   const pathname = usePathname();
+  const router = useRouter();
   const isLandingPage = pathname === '/';
 
-  // Get auth state from browser Supabase client
+  // Auth state — subscribe to changes (sign-in, sign-out, token refresh)
+  // The initial getUser() call is skipped here because we already have it from the server.
   useEffect(() => {
-    const supabase: SupabaseClient = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    supabase.auth.getUser().then((res: { data: { user: SupabaseUser | null } }) => {
-      setUser(res.data.user);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const supabase = getSupabaseBrowserClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
   }, []);
 
+  // Prefetch primary routes on mount so navigations feel instant
+  useEffect(() => {
+    router.prefetch('/dashboard');
+    router.prefetch('/trips');
+    router.prefetch('/profile');
+    router.prefetch('/notifications');
+    router.prefetch('/messages');
+  }, [router]);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+    // passive: true tells the browser this listener won't call preventDefault — enables scroll optimizations
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -76,12 +95,15 @@ export default function NavbarClient() {
     <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${navBg}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
-        {/* Brand Logo */}
+        {/* Brand Logo — next/image handles WebP conversion, sizing, and CDN caching */}
         <Link href="/" className="flex items-center gap-2">
           <div className={`rounded-xl overflow-hidden transition-all duration-300 ${isLandingPage && !isScrolled ? 'bg-white/90 p-1.5 shadow-lg backdrop-blur-sm' : ''}`}>
-            <img 
-              src="/logo.png" 
-              alt="Bhratra Logo" 
+            <Image
+              src="/logo.png"
+              alt="Bhratra Logo"
+              width={48}
+              height={48}
+              priority
               className="h-10 sm:h-12 w-auto object-contain"
             />
           </div>
@@ -117,7 +139,7 @@ export default function NavbarClient() {
                   className="flex items-center gap-2 rounded-full border border-gray-200 bg-white hover:bg-gray-50 pl-1 pr-3 py-1 shadow-sm transition-colors"
                 >
                   {userAvatar ? (
-                    <img src={userAvatar} alt={userName ?? 'User'} className="w-7 h-7 rounded-full object-cover" />
+                    <Image src={userAvatar} alt={userName ?? 'User'} width={28} height={28} className="w-7 h-7 rounded-full object-cover" />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-mountain-blue text-white flex items-center justify-center text-xs font-bold">
                       {initials}
@@ -207,7 +229,7 @@ export default function NavbarClient() {
             </div>
           ) : (
             <div className="flex gap-3">
-               <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}
+              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}
                 className="flex-1 text-center font-bold text-slate-600 border border-gray-200 py-2.5 rounded-xl">Sign In</Link>
               <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}
                 className="flex-1 text-center font-bold bg-mountain-blue text-white py-2.5 rounded-[16px]">Get Started</Link>

@@ -1,10 +1,29 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { getTripChatContextAction } from '@/app/(app)/trips/[id]/chat/actions';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
-import TripChat from '@/components/features/TripChat';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
+
+// Lazy-load TripChat — 18 KB of Supabase realtime + chat UI, only needed on this page
+const TripChat = dynamic(
+  () => import('@/components/features/TripChat'),
+  {
+    loading: () => (
+      <div className="space-y-3">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className={`flex gap-3 ${i % 2 === 0 ? 'flex-row-reverse' : ''}`}>
+            <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+            <Skeleton className={`h-12 rounded-2xl ${i % 2 === 0 ? 'w-2/3' : 'w-1/2'}`} />
+          </div>
+        ))}
+        <Skeleton className="h-12 w-full rounded-xl mt-4" />
+      </div>
+    ),
+  }
+);
 
 export default async function TripChatPage({
   params,
@@ -54,7 +73,7 @@ export default async function TripChatPage({
           </div>
         </div>
 
-        {/* Realtime Chat Window */}
+        {/* Realtime Chat Window — lazy loaded */}
         <TripChat
           tripId={id}
           initialMessages={res.messages || []}

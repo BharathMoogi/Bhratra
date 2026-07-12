@@ -34,6 +34,11 @@ export interface Profile {
   languages: string[];
   dietary: string;
   smoking: boolean;
+  bikeType: string | null;
+  ridingExperience: string | null;
+  travelStyle: string | null;
+  budgetPref: string | null;
+  preferredDestinations: string[];
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -66,6 +71,12 @@ export interface Trip {
   requests?: TripRequest[];
   messages?: ChatMessage[];
   images?: TripImage[];
+  startLat?: number | null;
+  startLng?: number | null;
+  endLat?: number | null;
+  endLng?: number | null;
+  routePath?: string | null;
+  mapMarkers?: TripMapMarker[];
 }
 
 // 4. TripMember Interface
@@ -78,6 +89,10 @@ export interface TripMember {
   updatedAt: string;
   deletedAt: string | null;
   user?: User;
+  latitude?: number | null;
+  longitude?: number | null;
+  shareLocation?: boolean;
+  locationUpdatedAt?: string | null;
 }
 
 // 5. TripRequest Interface
@@ -90,6 +105,20 @@ export interface TripRequest {
   createdAt: string;
   updatedAt: string;
   user?: User;
+}
+
+// 5.5 TripMapMarker Interface
+export interface TripMapMarker {
+  id: string;
+  tripId: string;
+  title: string;
+  description: string | null;
+  lat: number;
+  lng: number;
+  type: string; // MEETING_POINT, REST_STOP, HAZARD, PHOTO_OP, CUSTOM
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // 6. ChatMessage Interface

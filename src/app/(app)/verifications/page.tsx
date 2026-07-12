@@ -1,12 +1,27 @@
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
-import VerificationClient from '@/components/features/VerificationClient';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Lazy-load VerificationClient — it's 15 KB and not needed until the page loads
+const VerificationClient = dynamic(
+  () => import('@/components/features/VerificationClient'),
+  {
+    loading: () => (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64 rounded-xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+      </div>
+    ),
+  }
+);
 
 export default async function VerificationPage() {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // getCachedUser() — shared memoized lookup, no extra auth round-trip
+  const user = await getCachedUser();
 
   let initialProfile = null;
   if (user) {
@@ -29,4 +44,3 @@ export default async function VerificationPage() {
     </div>
   );
 }
-

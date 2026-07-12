@@ -1,17 +1,40 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import dynamic from 'next/dynamic';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
-import ProfileForm from '@/components/features/ProfileForm';
+import { Skeleton } from '@/components/ui/skeleton';
 import { signOutAction } from '@/app/auth/actions';
 import { LogOut, User } from 'lucide-react';
 import { UserProfile } from '@/types';
 
+// Lazy-load the 14 KB ProfileForm — defers this chunk until the component is needed
+const ProfileForm = dynamic(
+  () => import('@/components/features/ProfileForm'),
+  {
+    loading: () => (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-20 w-20 rounded-full" />
+          <Skeleton className="h-9 w-32 rounded-full" />
+        </div>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="space-y-1.5">
+            <Skeleton className="h-4 w-24 rounded" />
+            <Skeleton className="h-10 w-full rounded-xl" />
+          </div>
+        ))}
+        <Skeleton className="h-10 w-full rounded-xl" />
+      </div>
+    ),
+  }
+);
+
 export default async function ProfilePage() {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // getCachedUser() is shared with Navbar — zero extra auth round-trips
+  const user = await getCachedUser();
 
   if (!user) {
     redirect('/login');
@@ -85,6 +108,11 @@ export default async function ProfilePage() {
     languages: profile.languages,
     dietary: profile.dietary,
     smoking: profile.smoking,
+    bikeType: profile.bikeType,
+    ridingExperience: profile.ridingExperience,
+    travelStyle: profile.travelStyle,
+    budgetPref: profile.budgetPref,
+    preferredDestinations: profile.preferredDestinations,
     createdAt: profile.createdAt.toISOString(),
     updatedAt: profile.updatedAt.toISOString(),
     deletedAt: profile.deletedAt ? profile.deletedAt.toISOString() : null,

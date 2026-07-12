@@ -1,14 +1,13 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import { Settings, User, ShieldAlert, Bell, ChevronRight, Lock } from 'lucide-react';
 
 export default async function SettingsPage() {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   if (!user) {
     redirect('/login');

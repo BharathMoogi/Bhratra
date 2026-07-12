@@ -41,24 +41,29 @@ model User {
 
 // 2. Profile Model holding user-specific detail details
 model Profile {
-  id              String    @id
-  user            User      @relation(fields: [id], references: [id], onDelete: Cascade)
-  fullName        String?
-  avatarUrl       String?
-  bio             String?
-  phoneNumber     String?
-  gender          String?
-  birthDate       DateTime?
-  isVerified      Boolean   @default(false)
-  verificationDoc String?
-  rating          Float     @default(0.0)
-  interests       String[]
-  languages       String[]
-  dietary         String    @default("NO_PREFERENCE")
-  smoking         Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  deletedAt       DateTime?
+  id                    String    @id
+  user                  User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  fullName              String?
+  avatarUrl             String?
+  bio                   String?
+  phoneNumber           String?
+  gender                String?
+  birthDate             DateTime?
+  isVerified            Boolean   @default(false)
+  verificationDoc       String?
+  rating                Float     @default(0.0)
+  interests             String[]
+  languages             String[]
+  dietary               String    @default("NO_PREFERENCE")
+  smoking               Boolean   @default(false)
+  bikeType              String?
+  ridingExperience      String?
+  travelStyle           String?
+  budgetPref            String?
+  preferredDestinations String[]  @default([])
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  deletedAt             DateTime?
 
   @@index([isVerified])
 }
@@ -94,6 +99,13 @@ model Trip {
   reports        Report[]
   images         TripImage[]
   chatReadStates ChatReadState[]
+  mapMarkers     TripMapMarker[]
+
+  startLat       Float?
+  startLng       Float?
+  endLat         Float?
+  endLng         Float?
+  routePath      String?       // JSON stringified coordinates list [[lng, lat], ...]
 
   @@index([ownerId])
   @@index([type])
@@ -112,6 +124,11 @@ model TripMember {
   joinedAt  DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  latitude          Float?
+  longitude         Float?
+  shareLocation     Boolean   @default(false)
+  locationUpdatedAt DateTime?
 
   @@unique([tripId, userId])
   @@index([tripId])
@@ -265,4 +282,21 @@ model ChatReadState {
   @@unique([tripId, userId])
   @@index([tripId])
   @@index([userId])
+}
+
+// 14. TripMapMarker Model managing custom pins on map
+model TripMapMarker {
+  id          String   @id @default(uuid())
+  tripId      String
+  trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  lat         Float
+  lng         Float
+  type        String   @default("CUSTOM") // MEETING_POINT, REST_STOP, HAZARD, PHOTO_OP, CUSTOM
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tripId])
 }

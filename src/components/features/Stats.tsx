@@ -1,18 +1,21 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { useMotionValue, useTransform, animate, motion } from 'framer-motion';
+import { useMotionValue, useTransform, animate, motion, useInView } from 'framer-motion';
 import { Star } from 'lucide-react';
 
 function CountUpNumber({ value, suffix = '', light = false }: { value: number; suffix?: string; light?: boolean }) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const ref = useRef<HTMLSpanElement>(null);
+  // Fire the count-up only when the number is scrolled into view
+  const isInView = useInView(ref, { once: true, margin: '0px 0px -40px 0px' });
 
   useEffect(() => {
+    if (!isInView) return;
     const controls = animate(count, value, { duration: 2, ease: 'easeOut' });
     return () => controls.stop();
-  }, [value, count]);
+  }, [isInView, value, count]);
 
   useEffect(() => {
     return rounded.on('change', (latest) => {
@@ -48,7 +51,8 @@ export default function Stats({ light = false }: StatsProps) {
     <motion.div
       variants={containerVariants}
       initial="hidden"
-      animate="show"
+      whileInView="show"
+      viewport={{ once: true, margin: '0px 0px -60px 0px' }}
       className={`grid grid-cols-4 gap-6 pt-6 border-t w-full max-w-sm ${
         light ? 'border-white/15' : 'border-gray-100'
       }`}

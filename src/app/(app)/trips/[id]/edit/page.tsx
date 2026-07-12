@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
@@ -15,17 +15,17 @@ export default async function EditTripPage({
 }) {
   const { id } = await params;
 
-  const supabase = await getSupabaseServerClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  // Run Auth check and Trip details fetch in parallel
+  const [user, trip] = await Promise.all([
+    getCachedUser(),
+    prisma.trip.findFirst({
+      where: { id: id, deletedAt: null },
+    }),
+  ]);
 
-  if (authError || !user) {
+  if (!user) {
     redirect('/login');
   }
-
-  // Fetch the trip details from database
-  const trip = await prisma.trip.findFirst({
-    where: { id: id, deletedAt: null },
-  });
 
   if (!trip) {
     return (

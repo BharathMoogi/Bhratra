@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
@@ -16,8 +16,11 @@ export default async function TravelerProfilePage({
 }) {
   const { id: travelerId } = await params;
 
-  // 1. Fetch trust stats, profile details, and review logs
-  const res = await getTravelerTrustProfileAction(travelerId);
+  // 1. Fetch trust stats, profile details, review logs and auth user context in parallel
+  const [res, user] = await Promise.all([
+    getTravelerTrustProfileAction(travelerId),
+    getCachedUser(),
+  ]);
 
   if (res.error || !res.profile) {
     return (
@@ -34,9 +37,6 @@ export default async function TravelerProfilePage({
     );
   }
 
-  // 2. Fetch authenticated user context to calculate review eligibility
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
   const currentUserId = user?.id;
 
   let eligibleTripsForReview: any[] = [];

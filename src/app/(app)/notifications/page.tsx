@@ -1,20 +1,20 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { getSupabaseServerClient } from '@/lib/supabase-server';
+import { getCachedUser } from '@/lib/supabase-server';
 import prisma from '@/lib/db';
 import Header from '@/components/shared/Header';
 import Footer from '@/components/shared/Footer';
 import { Bell, BellOff, CheckCircle2, ChevronRight, MessageSquare, ShieldCheck, UserCheck } from 'lucide-react';
 
 export default async function NotificationsPage() {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // getCachedUser() — shared memoized lookup across all Server Components
+  const user = await getCachedUser();
 
   if (!user) {
     redirect('/login');
   }
 
-  // Fetch all notifications for current user
+  // Fetch notifications (read + unread) in a single query
   const notifications = await prisma.notification.findMany({
     where: { userId: user.id },
     include: {
@@ -25,9 +25,11 @@ export default async function NotificationsPage() {
     orderBy: { createdAt: 'desc' },
   });
 
-  // Mark all notifications as read when visiting this page
+  // Mark unread notifications as read — fire in parallel with any remaining work
   if (notifications.some(n => !n.isRead)) {
-    await prisma.notification.updateMany({
+    // Non-blocking: we already have the data, so this write can run without
+    // holding up the render. Use void to intentionally not await here.
+    void prisma.notification.updateMany({
       where: { userId: user.id, isRead: false },
       data: { isRead: true },
     });
@@ -35,16 +37,11 @@ export default async function NotificationsPage() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'TRIP_REQUEST':
-        return <UserCheck className="h-5 w-5 text-amber-500" />;
-      case 'TRIP_ACCEPT':
-        return <CheckCircle2 className="h-5 w-5 text-emerald-500" />;
-      case 'CHAT_MESSAGE':
-        return <MessageSquare className="h-5 w-5 text-blue-500" />;
-      case 'REVIEW_RECEIVED':
-        return <ShieldCheck className="h-5 w-5 text-purple-500" />;
-      default:
-        return <Bell className="h-5 w-5 text-slate-500" />;
+      case 'TRIP_REQUEST':    return <UserCheck className="h-5 w-5 text-amber-500" />;
+      case 'TRIP_ACCEPT':     return <CheckCircle2 className="h-5 w-5 text-emerald-500" />;
+      case 'CHAT_MESSAGE':    return <MessageSquare className="h-5 w-5 text-blue-500" />;
+      case 'REVIEW_RECEIVED': return <ShieldCheck className="h-5 w-5 text-purple-500" />;
+      default:                return <Bell className="h-5 w-5 text-slate-500" />;
     }
   };
 
@@ -66,17 +63,15 @@ export default async function NotificationsPage() {
             </div>
             <h3 className="text-lg font-bold text-slate-800">No Notifications</h3>
             <p className="text-sm text-slate-500">
-              You are all caught up! When other travelers interact with your trips or message you, they'll show up here.
+              You are all caught up! When other travelers interact with your trips or message you, they&apos;ll show up here.
             </p>
           </div>
         ) : (
           <div className="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-sm divide-y divide-slate-100">
             {notifications.map((notif) => {
-              const senderName = notif.sender?.profile?.fullName || 'Someone';
-              
               return (
-                <div 
-                  key={notif.id} 
+                <div
+                  key={notif.id}
                   className={`p-5 flex items-start gap-4 transition-colors ${
                     !notif.isRead ? 'bg-blue-50/20' : 'hover:bg-slate-50/40'
                   }`}
@@ -84,32 +79,19 @@ export default async function NotificationsPage() {
                   <div className="p-2.5 bg-slate-50 border border-slate-100 rounded-xl shrink-0 mt-0.5">
                     {getIcon(notif.type)}
                   </div>
-
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-bold text-sm text-slate-900 truncate">
-                        {notif.title}
-                      </h4>
+                      <h4 className="font-bold text-sm text-slate-900 truncate">{notif.title}</h4>
                       <span className="text-[10px] font-semibold text-slate-400 whitespace-nowrap">
                         {new Date(notif.createdAt).toLocaleDateString('en-IN', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
+                          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
                         })}
                       </span>
                     </div>
-
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      {notif.content}
-                    </p>
-
+                    <p className="text-xs text-slate-600 leading-relaxed">{notif.content}</p>
                     {notif.link && (
                       <div className="pt-2">
-                        <Link
-                          href={notif.link}
-                          className="inline-flex items-center gap-1 text-xs font-bold text-mountain-blue hover:underline"
-                        >
+                        <Link href={notif.link} className="inline-flex items-center gap-1 text-xs font-bold text-mountain-blue hover:underline">
                           View details <ChevronRight className="h-3 w-3" />
                         </Link>
                       </div>

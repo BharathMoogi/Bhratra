@@ -10,6 +10,11 @@ export const profileSchema = z.object({
   languages: z.array(z.string()).max(5, 'You can choose up to 5 languages').default([]),
   dietary: z.enum(['VEG', 'NON_VEG', 'NO_PREFERENCE']).default('NO_PREFERENCE'),
   smoking: z.boolean().default(false),
+  bikeType: z.string().optional().nullable(),
+  ridingExperience: z.string().optional().nullable(),
+  travelStyle: z.string().optional().nullable(),
+  budgetPref: z.string().optional().nullable(),
+  preferredDestinations: z.array(z.string()).max(10, 'You can choose up to 10 destinations').default([]),
 });
 
 export const verificationSchema = z.object({
