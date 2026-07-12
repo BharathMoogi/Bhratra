@@ -117,6 +117,9 @@ export default async function ProfilePage() {
     } as any;
   }
 
+  console.log('PROFILE_DEBUG - dbUser:', { id: dbUser?.id, email: dbUser?.email, hasProfile: !!dbUser?.profile });
+  console.log('PROFILE_DEBUG - profile:', { id: profile?.id, fullName: profile?.fullName, avatarUrl: profile?.avatarUrl });
+
   // Safely map dates and fields for the client component
   const profileProps: UserProfile = {
     id: profile.id,
@@ -144,6 +147,8 @@ export default async function ProfilePage() {
     updatedAt: profile.updatedAt.toISOString(),
     deletedAt: profile.deletedAt ? profile.deletedAt.toISOString() : null,
   };
+
+  console.log('PROFILE_DEBUG - profileProps mapped successfully. avatarUrl length:', profileProps.avatarUrl?.length || 0);
 
   return (
     <div className="flex flex-col min-h-screen">
