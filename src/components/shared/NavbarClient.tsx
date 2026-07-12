@@ -78,7 +78,7 @@ export default function NavbarClient() {
 
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className={`rounded-xl overflow-hidden transition-all duration-300 ${isTransparent ? 'bg-white/90 p-1.5 shadow-lg backdrop-blur-sm' : ''}`}>
+          <div className={`rounded-xl overflow-hidden transition-all duration-300 ${isLandingPage && !isScrolled ? 'bg-white/90 p-1.5 shadow-lg backdrop-blur-sm' : ''}`}>
             <img 
               src="/logo.png" 
               alt="Bhratra Logo" 
