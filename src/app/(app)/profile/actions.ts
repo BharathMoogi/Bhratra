@@ -63,27 +63,37 @@ export async function uploadAvatarAction(formData: FormData) {
   }
 
   try {
-    const fileExtension = file.name.split('.').pop();
+    const fileExtension = file.name.split('.').pop() || 'png';
     const filePath = `${user.id}/avatar-${Date.now()}.${fileExtension}`;
     const fileBuffer = await file.arrayBuffer();
 
-    // Stream upload directly to Supabase storage bucket 'avatars'
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, fileBuffer, {
-        contentType: file.type,
-        upsert: true,
-      });
+    let publicUrl = '';
 
-    if (uploadError) {
-      console.error('Supabase Storage upload error:', uploadError);
-      return { error: `Storage Upload failed: ${uploadError.message}` };
+    try {
+      // Stream upload directly to Supabase storage bucket 'avatars'
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, fileBuffer, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Retrieve public URL of the uploaded image
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+      
+      publicUrl = urlData?.publicUrl || '';
+    } catch (storageError: any) {
+      console.warn('Supabase Storage upload failed, utilizing Base64 Data URL fallback:', storageError);
+      // Convert buffer to base64 Data URL
+      const base64String = Buffer.from(fileBuffer).toString('base64');
+      publicUrl = `data:${file.type};base64,${base64String}`;
     }
-
-    // Retrieve public URL of the uploaded image
-    const { data: { publicUrl } } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(filePath);
 
     // Save the new avatarUrl reference in our local PostgreSQL database
     await prisma.profile.update({

@@ -84,20 +84,27 @@ export default function ProfileForm({ initialProfile }: ProfileFormProps) {
     if (!file) return;
 
     setErrorMsg(null);
+    setSuccessMsg(null);
     setIsUploading(true);
 
-    const formData = new FormData();
-    formData.append('avatar', file);
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
 
-    const res = await uploadAvatarAction(formData);
-    setIsUploading(false);
+      const res = await uploadAvatarAction(formData);
 
-    if (res?.error) {
-      setErrorMsg(res.error);
-    } else if (res?.avatarUrl) {
-      setAvatarUrl(res.avatarUrl);
-      setSuccessMsg('Avatar photo uploaded successfully.');
-      router.refresh();
+      if (res?.error) {
+        setErrorMsg(res.error);
+      } else if (res?.avatarUrl) {
+        setAvatarUrl(res.avatarUrl);
+        setSuccessMsg('Avatar photo uploaded successfully.');
+        router.refresh();
+      }
+    } catch (err: any) {
+      console.error('Avatar upload client-side handler error:', err);
+      setErrorMsg(err.message || 'An unexpected error occurred during photo upload.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
