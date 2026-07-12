@@ -81,13 +81,40 @@ export default async function ProfilePage() {
         },
       });
     } catch (dbError) {
-      console.error('Lazy Profile creation in page fallback failed:', dbError);
-      return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-4">
-          <p className="text-destructive font-semibold">Failed to establish profile context. Please try again.</p>
-        </div>
-      );
+      console.warn('Lazy Profile creation in page fallback failed, attempting direct query:', dbError);
+      profile = await prisma.profile.findUnique({
+        where: { id: user.id },
+      });
     }
+  }
+
+  // Safety fallback profile object to prevent server component rendering crash
+  if (!profile) {
+    console.warn('Database profile not found for user. Using fallback profile object.');
+    profile = {
+      id: user.id,
+      fullName: user.user_metadata?.full_name || '',
+      avatarUrl: user.user_metadata?.avatar_url || null,
+      bio: '',
+      phoneNumber: '',
+      gender: 'PREFER_NOT_TO_SAY',
+      birthDate: null,
+      isVerified: false,
+      verificationDoc: null,
+      rating: 0,
+      interests: [],
+      languages: [],
+      dietary: 'NO_PREFERENCE',
+      smoking: false,
+      bikeType: '',
+      ridingExperience: '',
+      travelStyle: '',
+      budgetPref: '',
+      preferredDestinations: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+    } as any;
   }
 
   // Safely map dates and fields for the client component
