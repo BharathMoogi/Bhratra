@@ -354,8 +354,11 @@ export async function manageJoinRequestAction(requestId: string, approve: boolea
             role: 'MEMBER',
           },
         }),
-        // Notify applicant
-        prisma.notification.create({
+      ]);
+
+      // Notify applicant (non-fatal)
+      try {
+        await prisma.notification.create({
           data: {
             userId: request.userId,
             senderId: user.id,
@@ -364,17 +367,20 @@ export async function manageJoinRequestAction(requestId: string, approve: boolea
             content: `Your request to join "${request.trip.title}" was approved!`,
             link: `/trips/${request.tripId}`,
           },
-        }),
-      ]);
+        });
+      } catch (notifErr) {
+        console.error('Failed to create approval notification (non-fatal):', notifErr);
+      }
     } else {
-      await prisma.$transaction([
-        // Reject request
-        prisma.tripRequest.update({
-          where: { id: requestId },
-          data: { status: 'REJECTED' },
-        }),
-        // Notify applicant
-        prisma.notification.create({
+      // Reject request
+      await prisma.tripRequest.update({
+        where: { id: requestId },
+        data: { status: 'REJECTED' },
+      });
+
+      // Notify applicant (non-fatal)
+      try {
+        await prisma.notification.create({
           data: {
             userId: request.userId,
             senderId: user.id,
@@ -383,8 +389,10 @@ export async function manageJoinRequestAction(requestId: string, approve: boolea
             content: `Your request to join "${request.trip.title}" was declined by the organizer.`,
             link: `/trips/${request.tripId}`,
           },
-        }),
-      ]);
+        });
+      } catch (notifErr) {
+        console.error('Failed to create rejection notification (non-fatal):', notifErr);
+      }
     }
 
     revalidatePath(`/trips/${request.tripId}`);
